@@ -1,6 +1,16 @@
-from typing import Dict, Generator
+# =============================================================================
+# BIBLIOTECAS E MÓDULOS
+# =============================================================================
+
 from bs4 import BeautifulSoup
+from pathlib import Path
 import requests
+from typing import Dict, Generator
+from utils import get_path_projeto
+
+# =============================================================================
+# CONSTANTES
+# =============================================================================
 
 URL_RAIZ = "http://vitibrasil.cnpuv.embrapa.br/"
 
@@ -11,6 +21,11 @@ urls = {
     "Importação": f"{URL_RAIZ}index.php?opcao=opt_05",
     "Exportação": f"{URL_RAIZ}index.php?opcao=opt_06",
 }
+
+
+# =============================================================================
+# FUNÇÕES
+# =============================================================================
 
 
 def get_links_download(urls: Dict[str, str]) -> Generator:
@@ -35,8 +50,6 @@ def get_links_download(urls: Dict[str, str]) -> Generator:
 
 
 def faz_download(links: Generator) -> None:
-    from pathlib import Path
-    from utils import get_path_projeto
 
     DIR_PROJETO = Path(get_path_projeto())
     dir_download = DIR_PROJETO / "data/bronze"
@@ -46,8 +59,13 @@ def faz_download(links: Generator) -> None:
         print(f"> Fazendo download . . .")
 
         nome_arquivo = link_download.split("/")[-1]
+        path_download = dir_download / nome_arquivo
 
-        with open(dir_download / nome_arquivo, "wb") as arquivo_download:
+        if path_download.exists():
+            print(f"> Arquivo '{path_download.name}' já existente!\n")
+            continue
+
+        with open(path_download, "wb") as arquivo_download:
             resposta = requests.get(link_download)
             arquivo_download.write(resposta.content)
 
@@ -56,4 +74,15 @@ def faz_download(links: Generator) -> None:
     return None
 
 
-faz_download(get_links_download(urls))
+# =============================================================================
+# CÓDIGO
+# =============================================================================
+
+
+def main() -> None:
+    faz_download(get_links_download(urls))
+    return None
+
+
+if __name__ == "__main__":
+    main()
