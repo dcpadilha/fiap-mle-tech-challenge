@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import user
+from routes import user, viti_brasil
 import logging
 from util import get_logger, clone_log_config
 
@@ -10,6 +10,7 @@ headers = ["*"]
 
 app = FastAPI()
 app.include_router(user.router)
+app.include_router(viti_brasil.router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
