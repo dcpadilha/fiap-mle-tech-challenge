@@ -1,109 +1,88 @@
-
-import requests
-from bs4 import BeautifulSoup as bts
-import pandas as pd
-import re
-import time
 import datetime
-import socket
-from fastapi import FastAPI, Request
-
-TIMEOUT_SEC = 10 # default timeout in seconds
-socket.setdefaulttimeout(TIMEOUT_SEC)
-
-def getAndParseURL(url):
-    result = requests.get(url,headers={"User-Agent":"Mozilla/5.0"})
-    soup = bts(result.text, 'html.parser')
-    return soup
+from fastapi import FastAPI,  HTTPException
+from vitivinicultura import Vitivinicultura
 
 app = FastAPI()
+vt = Vitivinicultura()
 
-main_url = "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_01"
-base_url = 'http://vitibrasil.cnpuv.embrapa.br/download/'
+modified_date = vt.get_last_updated_date()
+ultima_data_coletada = datetime.date(2023,12,21)
 
-files = {'file_dot_comma': ['Producao.csv',
-        'ProcessaViniferas.csv',
-        'Comercio.csv',
-        'ImpVinhos.csv',
-        'ImpEspumantes.csv',
-        'ImpFrescas.csv',
-        'ImpPassas.csv',
-        'ImpSuco.csv',
-        'ExpVinho.csv',
-        'ExpEspumantes.csv',
-        'ExpUva.csv',
-        'ExpSuco.csv'],
-        'file_t': ['ProcessaAmericanas.csv',
-        'ProcessaMesa.csv'] }
+vt.get_df_dict(modified_date, ultima_data_coletada)
+df_dict = vt.df_dict
 
-file_sep = {
-    'file_dot_comma': ';',
-    'file_t': '\t'
-}
-
-html_footer = getAndParseURL(main_url).find_all("table", {"class": "tb_base tb_footer"})
-bs_text_tag = html_footer[0].select('td')[0]
-last_date_regex = r"Última modificação: (\d{2})/(\d{2})/(\d{2})"
-match = re.search(last_date_regex, bs_text_tag.get_text())
-
-if match:
-    day, month, year = match.groups()
-    modified_date = datetime.datetime(year=int(year)+2000, month=int(month), day=int(day))
-    print("Última modificação:", modified_date.strftime("%d-%m-%Y"))
-else:
-    print("Não foi possível encontrar a data da 'Última modificação' do site")
-
-dataframes = []
-for file_type, filenames in files.items():
-    for filename in filenames:
-        try:
-            df = pd.read_csv(base_url + filename, sep=file_sep[file_type])
-            dataframes.append(df)
-        except Exception as e:
-            df = pd.DataFrame()  
-            dataframes.append(df)
-            print(f"Error reading {filename}: {e}")
-
-df_dict = {
-    'Producao': dataframes[0],
-    'ProcessaViniferas': dataframes[1],
-    'ProcessaAmericanas': dataframes[2],
-    'ProcessaMesa': dataframes[3],
-    'Comercio': dataframes[4],
-    'ImpVinhos': dataframes[5],
-    'ImpEspumantes': dataframes[6],
-    'ImpFrescas': dataframes[7],
-    'ImpPassas': dataframes[8],
-    'ImpSuco': dataframes[9],
-    'ExpVinho': dataframes[10],
-    'ExpEspumantes': dataframes[11],
-    'ExpUva': dataframes[12],
-    'ExpSuco': dataframes[13]
-}
-
-
-@app.get("/dados-csv")
-async def get_csv_data(request: Request):
+@app.get("/retorna_dados/")
+async def get_data(df_key: str, year: int = None):
     """
-    Rota para fornecer dados de um arquivo CSV.
-
-    Parâmetros:
-        request: Objeto de solicitação do FastAPI.
-
-    Retorno:
-        Dicionário contendo os dados do CSV.
+    Function to retrieve data based on the key and optional year
     """
-
-    # Obter o nome do arquivo CSV a partir da solicitação
-    file_name = request.query_params["file_name"]
-
-    # Ler o arquivo CSV e converter em DataFrame
     try:
-        data = pd.read_csv(file_name)
-    except FileNotFoundError:
-        return {"mensagem": f"Arquivo CSV '{file_name}' não encontrado."}, 404
+        if df_key not in df_dict:
+            raise HTTPException(status_code=404, detail={"error": f"Dataframe '{df_key}' not found. Select one of this options {list(df_dict)}"}) 
+        df = vt.get_tabela_especifica(df_key)
+        if year:
+            year = str(year)
+            if year not in df.columns:
+                raise HTTPException(status_code=404, detail= {"error": f"Year '{year}' not found in '{df_key}' data"})
+            data = df[[f"produto", f"{year}"]].to_dict(orient="records")  # Improved column selection
+        else:
+            data = df.to_dict(orient="records")
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=404, detail={"error": f"Unexpected error: {e}"})  # Generic error message for unexpected issues
 
-    # Converter DataFrame em dicionário
-    data_dict = data.to_dict(orient="records")
+# @app.get("/dados-producao")
+# async def get_producao(request: Request):
+#     return df_dict['Producao'].to_dict(orient="records")
 
-    return data_dict
+# @app.get("/dados-processaviniferas")
+# async def get_processaviniferas(request: Request):
+#     return df_dict['ProcessaViniferas'].to_dict(orient="records")
+
+# @app.get("/dados-processaamericanas")
+# async def get_processaamericanas(request: Request):
+#     return df_dict['ProcessaAmericanas'].to_dict(orient="records")
+
+# @app.get("/dados-processamesa")
+# async def get_processamesa(request: Request):
+#     return df_dict['ProcessaMesa'].to_dict(orient="records")
+
+# @app.get("/dados-comercio")
+# async def get_comercio(request: Request):
+#     return df_dict['Comercio'].to_dict(orient="records")
+
+# @app.get("/dados-impvinhos")
+# async def get_impvinhos(request: Request):
+#     return df_dict['ImpVinhos'].to_dict(orient="records")
+
+# @app.get("/dados-impespumantes")
+# async def get_impespumantes(request: Request):
+#     return df_dict['ImpEspumantes'].to_dict(orient="records")
+
+# @app.get("/dados-impfrescas")
+# async def get_impfrescas(request: Request):
+#     return df_dict['ImpFrescas'].to_dict(orient="records")
+
+# @app.get("/dados-imppassas")
+# async def get_imppassas(request: Request):
+#     return df_dict['ImpPassas'].to_dict(orient="records")
+
+# @app.get("/dados-impsuco")
+# async def get_impsuco(request: Request):
+#     return df_dict['ImpSuco'].to_dict(orient="records")
+
+# @app.get("/dados-expvinho")
+# async def get_expvinho(request: Request):
+#     return df_dict['ExpVinho'].to_dict(orient="records")
+
+# @app.get("/dados-expespumantes")
+# async def get_expespumantes(request: Request):
+#     return df_dict['ExpEspumantes'].to_dict(orient="records")
+
+# @app.get("/dados-expuva")
+# async def get_expuva(request: Request):
+#     return df_dict['ExpUva'].to_dict(orient="records")
+
+# @app.get("/dados-expsuco")
+# async def get_expsuco(request: Request):
+#     return df_dict['ExpSuco'].to_dict(orient="records")
