@@ -68,14 +68,14 @@ class ScrappingApp():
 
     def save_json(self, filename: str, name_page: str):
 
-        directory = './data'
-        filename = f'{filename}.json'
+        directory = f"./data/{name_page}"
+        filename = f"{filename}.json"
         filepath = os.path.join(directory, filename)
 
         # Garantir que o diretório existe
         os.makedirs(directory, exist_ok=True)
 
-        with open(f'{filepath}', 'w', encoding='utf-8') as json_file:
+        with open(f"{filepath}", "w", encoding="utf-8") as json_file:
             json.dump(self.data, json_file, indent=4,  ensure_ascii=False)
 
     def run(self):
