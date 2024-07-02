@@ -24,7 +24,7 @@ class ScrappingApp():
 
     def get_base_html(self):
         self.html_page = requests.get(f"{self.base_url}?opcao={TypeOption.Production.value}").text
-        self.soup = BeautifulSoup(self.base_url, "html.parser")
+        self.soup = BeautifulSoup(self.html_page, "html.parser")
 
     def get_years_of_data(self):
         # Responsável por coletar o range de datas
@@ -33,7 +33,10 @@ class ScrappingApp():
         pattern = r'\[\s*(\d{4})\s*-\s*(\d{4})\s*\]'
         match = re.search(pattern, str_datas)
 
-        return list(range(int(match.group(1)), (int(match.group(2) + 1))))
+        start_year = int(match.group(1))
+        end_year = int(match.group(2))
+
+        return list(range(start_year, (end_year + 1)))
         
     def get_info_page(self):
         tables = self.soup.find_all('table', class_='tb_base tb_dados')
@@ -80,8 +83,8 @@ class ScrappingApp():
 
     def run(self):
         self.get_base_html()
-        self.get_info_page()
         self.get_years_of_data()
+        self.get_info_page()
         
 
 
