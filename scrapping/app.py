@@ -1,17 +1,18 @@
 from bs4 import BeautifulSoup
 import requests
-import re
+
 import json
 import utils
 from enum import Enum
 import os
 
 class TypeOption(Enum):
-    Production = "opt_02"
-    Proccess = "opt_03"
-    Commercialization = "opt_04"
-    Importation = "opt_05"
-    Exportation = "opt_06"
+    Production = {"item": "opt_02"}
+
+    Proccess = {"item": "opt_03", "subitens": [["subopt_01", "subopt_02", "subopt_03", "subopt_04"]]}
+    Commercialization = {"item": "opt_04", "subitens": [["subopt_01", "subopt_02", "subopt_03", "subopt_04"]]}
+    Importation = {"item": "opt_05", "subitens": [["subopt_01", "subopt_02", "subopt_03", "subopt_04"]]}
+    Exportation = {"item": "opt_06", "subitens": [["subopt_01", "subopt_02", "subopt_03", "subopt_04"]]}
 
 
 class ScrappingApp():
@@ -20,7 +21,7 @@ class ScrappingApp():
         self.base_url = "http://vitibrasil.cnpuv.embrapa.br/index.php"
         self.soup = None
         self.html_page = None
-        self.data = None
+        self.data = []
 
     def get_base_html(self):
         self.html_page = requests.get(f"{self.base_url}?opcao={TypeOption.Production.value}").text
@@ -30,49 +31,42 @@ class ScrappingApp():
         # Responsável por coletar o range de datas
         tb_datas = self.soup.find_all("table")[5]
         str_datas = tb_datas.find("label", attrs={"class": "lbl_pesq"}).text
-        pattern = r'\[\s*(\d{4})\s*-\s*(\d{4})\s*\]'
-        match = re.search(pattern, str_datas)
 
-        start_year = int(match.group(1))
-        end_year = int(match.group(2))
+        return utils.transform_data_list(str_datas)
 
-        return list(range(start_year, (end_year + 1)))
         
     def get_info_page(self):
         tables = self.soup.find_all('table', class_='tb_base tb_dados')
 
         for table in tables:
             rows = table.find_all('tr')
-            
+
             current_item = None
             for row in rows:
                 main_cell = row.find('td', class_='tb_item')
-                if main_cell:
-                    item_name =  re.sub(r'^\s+|\s+$', '', main_cell.text)
-                    
+                if main_cell:                    
                     # Se encontrar um item principal, inicializa o dicionário
-                    item_name = main_cell.text
-                    item_name =  re.sub(r'^\s+|\s+$', '', main_cell.text)
-                    
-                    item_value = utils.convert_to_int(main_cell.find_next_sibling('td').text)
-
-                    current_item = {item_name: {"Valor Total": item_value, "Ano da Informação": '2024'}}
+                    item_name = utils.remove_space(main_cell.text)
+                    item_value = utils.convert_to_int(utils.remove_space(main_cell.find_next_sibling('td').text))
+                    current_item = {item_name: {"Valor Total": item_value, "Ano da Informação": "2024"}}
+                    # print(current_item)
                     self.data.append(current_item)
                 else:
                     # Se não for item principal, processa como subitem
                     sub_cells = row.find_all('td')
                     if sub_cells and len(sub_cells) > 1:
 
-                        sub_item_name = re.sub(r'^\s+|\s+$', '', sub_cells[0].text)
+                        sub_item_name = utils.remove_space(sub_cells[0].text)
+                        
                         if not 'Total' in sub_item_name:
                             sub_item_value = utils.convert_to_int(sub_cells[1].text.replace(" ", "").replace("\n","").replace(".", "")) 
                             current_item[item_name][sub_item_name] = sub_item_value
-        self.save_json("data", "Production")
+        self.save_json("data", "Production", "")
 
-    def save_json(self, filename: str, name_page: str):
+    def save_json(self, filename: str, name_page: str, actual_year: str):
 
-        directory = f"./data/{name_page}"
-        filename = f"{filename}.json"
+        directory = f"./data/{name_page}/"
+        filename = f"{name_page}_{filename}_actual_year.json"
         filepath = os.path.join(directory, filename)
 
         # Garantir que o diretório existe
