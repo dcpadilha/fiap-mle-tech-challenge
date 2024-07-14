@@ -38,8 +38,8 @@ def dag_vitbrasil_extract_process():
                 if main_cell:                    
                     # Se encontrar um item principal, inicializa o dicionário
                     item_name = utils.remove_space(main_cell.text)
-                    item_value = utils.convert_to_int(utils.remove_space(main_cell.find_next_sibling('td').text))
-                    current_item = {item_name: {"Valor Total": item_value, "Ano da Informação": ds[:4]}}
+                   
+                    current_item = {item_name: {"Ano da Informação": ds[:4]}}
                     # print(current_item)
                     data.append(current_item)
                 else:
