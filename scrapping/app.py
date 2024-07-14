@@ -14,7 +14,6 @@ class TypeOption(Enum):
     Importation = {"item": "opt_05", "subitens": [["subopt_01", "subopt_02", "subopt_03", "subopt_04"]]}
     Exportation = {"item": "opt_06", "subitens": [["subopt_01", "subopt_02", "subopt_03", "subopt_04"]]}
 
-
 class ScrappingApp():
 
     def __init__(self):
