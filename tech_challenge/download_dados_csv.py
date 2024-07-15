@@ -2,120 +2,53 @@
 # BIBLIOTECAS E MÓDULOS
 # =============================================================================
 
+import pickle
 from pathlib import Path
-from typing import Generator, List
+from typing import Dict, Generator, List, Union
 
 import requests
 from bs4 import BeautifulSoup
-from pydantic import BaseModel
 
-from tech_challenge.utils import get_path_projeto
-
-
-class Url(BaseModel):
-    abaPrincipal: str
-    abaSecundaria: str | None
-    url: str
-
+from tech_challenge.common import DADOS, URL_RAIZ
+from tech_challenge.schemas import Dados
+from tech_challenge.utils import get_path_projeto, normaliza_str
 
 # =============================================================================
 # CONSTANTES
 # =============================================================================
 
-URL_RAIZ = "http://vitibrasil.cnpuv.embrapa.br/"
-
-urls = [
-    Url(
-        abaPrincipal="Produção",
-        abaSecundaria=None,
-        url=f"{URL_RAIZ}index.php?opcao=opt_02",
-    ),
-    Url(
-        abaPrincipal="Processamento",
-        abaSecundaria="Viníferas",
-        url=f"{URL_RAIZ}index.php?opcao=opt_03&subopcao=subopt_01",
-    ),
-    Url(
-        abaPrincipal="Processamento",
-        abaSecundaria="Americanas e híbridas",
-        url=f"{URL_RAIZ}index.php?opcao=opt_03&subopcao=subopt_02",
-    ),
-    Url(
-        abaPrincipal="Processamento",
-        abaSecundaria="Uvas de mesa",
-        url=f"{URL_RAIZ}index.php?opcao=opt_03&subopcao=subopt_03",
-    ),
-    Url(
-        abaPrincipal="Processamento",
-        abaSecundaria="Sem classificação",
-        url=f"{URL_RAIZ}index.php?opcao=opt_03&subopcao=subopt_04",
-    ),
-    Url(
-        abaPrincipal="Comercialização",
-        abaSecundaria=None,
-        url=f"{URL_RAIZ}index.php?opcao=opt_04",
-    ),
-    Url(
-        abaPrincipal="Importação",
-        abaSecundaria="Vinhos de mesa",
-        url=f"{URL_RAIZ}index.php?opcao=opt_05&subopcao=subopt_01",
-    ),
-    Url(
-        abaPrincipal="Importação",
-        abaSecundaria="Espumantes",
-        url=f"{URL_RAIZ}index.php?opcao=opt_05&subopcao=subopt_02",
-    ),
-    Url(
-        abaPrincipal="Importação",
-        abaSecundaria="Uvas frescas",
-        url=f"{URL_RAIZ}index.php?opcao=opt_05&subopcao=subopt_03",
-    ),
-    Url(
-        abaPrincipal="Importação",
-        abaSecundaria="Uvas passas",
-        url=f"{URL_RAIZ}index.php?opcao=opt_05&subopcao=subopt_04",
-    ),
-    Url(
-        abaPrincipal="Importação",
-        abaSecundaria="Suco de uva",
-        url=f"{URL_RAIZ}index.php?opcao=opt_05&subopcao=subopt_05",
-    ),
-    Url(
-        abaPrincipal="Exportação",
-        abaSecundaria="Vinhos de mesa",
-        url=f"{URL_RAIZ}index.php?opcao=opt_06&subopcao=subopt_01",
-    ),
-    Url(
-        abaPrincipal="Exportação",
-        abaSecundaria="Espumantes",
-        url=f"{URL_RAIZ}index.php?opcao=opt_06&subopcao=subopt_02",
-    ),
-    Url(
-        abaPrincipal="Exportação",
-        abaSecundaria="Uvas frescas",
-        url=f"{URL_RAIZ}index.php?opcao=opt_06&subopcao=subopt_03",
-    ),
-    Url(
-        abaPrincipal="Exportação",
-        abaSecundaria="Suco de uva",
-        url=f"{URL_RAIZ}index.php?opcao=opt_06&subopcao=subopt_04",
-    ),
-]
-
+DIR_PROJETO = Path(get_path_projeto())
+CAMADA_BRONZE = DIR_PROJETO / "data/bronze"
+CAMADA_BRONZE.mkdir(exist_ok=True, parents=True)
 
 # =============================================================================
 # FUNÇÕES
 # =============================================================================
 
+# -----------------------------------------------------------------------------
+# Representação em str dos dados
+# -----------------------------------------------------------------------------
 
-def get_links_download(urls: List[Url]) -> Generator:
+
+def texto_dados(dados: Dados) -> str:
+    texto = (
+        f"{dados.categoria}"
+        if dados.subCategoria is None
+        else f"{dados.categoria} | {dados.subCategoria}"
+    )
+    return texto
+
+
+# -----------------------------------------------------------------------------
+# Obtendo o link de download a partir da página web
+# -----------------------------------------------------------------------------
+
+
+def get_links_download(urls: List[Dados]) -> Generator:
     for url in urls:
-        texto = (
-            f"{url.abaPrincipal}"
-            if url.abaSecundaria is None
-            else f"{url.abaPrincipal} | {url.abaSecundaria}"
+        print(
+            f"### {texto_dados(url)} ###\n> 🔗 Obtendo URL de download . . ."
         )
-        print(f"### {texto} ###\n> 🔗 Obtendo URL de download . . .")
         resposta = requests.get(url=url.url)
         html_da_pagina = resposta.content
 
@@ -131,19 +64,63 @@ def get_links_download(urls: List[Url]) -> Generator:
 
         print("> ✅ URL obtido!")
 
-        yield texto, href_download
+        yield url, href_download
+
+
+# -----------------------------------------------------------------------------
+# Salvando os dados com path de download <- facilitar endpoints
+# -----------------------------------------------------------------------------
+
+
+def exporta_endpoints_dados(endpoints: Dict[str, Union[str, Path]]) -> None:
+    path_arquivo = CAMADA_BRONZE / "endpoints.pkl"
+
+    with open(path_arquivo, "wb") as pkl_f:
+        pickle.dump(obj=endpoints, file=pkl_f)
+
+    return None
+
+
+# -----------------------------------------------------------------------------
+# Importando os dados com path de download <- facilitar endpoints
+# -----------------------------------------------------------------------------
+
+
+def importa_endpoints_dados() -> Dict[str, Union[str, Path]]:
+    path_arquivo = CAMADA_BRONZE / "endpoints.pkl"
+
+    if not path_arquivo.exists():
+        raise FileNotFoundError(
+            "importa_dados_com_path: ERRO! Os dados não foram baixados para o servidor!"
+        )
+
+    with open(path_arquivo, "rb") as pkl_f:
+        endpoints = pickle.load(file=pkl_f)
+
+    return endpoints
+
+
+# -----------------------------------------------------------------------------
+# Fazendo download dos arquivos
+# -----------------------------------------------------------------------------
 
 
 def faz_download(links: Generator) -> None:
-    DIR_PROJETO = Path(get_path_projeto())
-    dir_download = DIR_PROJETO / "data/bronze"
-    dir_download.mkdir(exist_ok=True, parents=True)
+    endpoints = {}
 
-    for texto, link_download in links:
-        print(f"> 🕒 {texto}: Fazendo download . . .")
+    for url, link_download in links:
+        print(f"> 🕒 {texto_dados(url)}: Fazendo download . . .")
 
         nome_arquivo = link_download.split("/")[-1]
-        path_download = dir_download / nome_arquivo
+        path_download = CAMADA_BRONZE / nome_arquivo
+
+        url.pathDownload = path_download
+        endpoint = (
+            f"{normaliza_str(url.categoria)}/{normaliza_str(url.subCategoria)}"
+            if url.subCategoria
+            else f"{normaliza_str(url.categoria)}"
+        )
+        endpoints[endpoint] = path_download
 
         if path_download.exists():
             print(f"> ❗ Arquivo '{path_download.name}' já existente!\n")
@@ -155,6 +132,8 @@ def faz_download(links: Generator) -> None:
 
         print("> ✅ Download feito!\n")
 
+    exporta_endpoints_dados(endpoints)
+
     return None
 
 
@@ -164,7 +143,7 @@ def faz_download(links: Generator) -> None:
 
 
 def main() -> None:
-    faz_download(get_links_download(urls))
+    faz_download(get_links_download(DADOS))
     return None
 
 

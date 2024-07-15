@@ -52,6 +52,7 @@ pre_test = "task lint"
 test = "pytest -s -x --cov=tech_challenge -vv"
 post_test = "coverage html"
 jupyter = "python -m jupyterlab"
+run_dev = "fastapi dev tech_challenge/app.py"
 
 [build-system]
 requires = ["poetry-core"]
