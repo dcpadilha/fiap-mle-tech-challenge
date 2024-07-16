@@ -22,14 +22,14 @@ def dag_vitbrasil_extract_production():
         html_page = requests.get(base_url).text
         soup = BeautifulSoup(html_page, "html.parser")
 
-        tables = soup.find_all('table', class_='tb_base tb_dados')
+        tables = soup.find_all("table", class_="tb_base tb_dados")
         
         for table in tables:
-            rows = table.find_all('tr')
+            rows = table.find_all("tr")
 
             current_item = None
             for row in rows:
-                main_cell = row.find('td', class_='tb_item')
+                main_cell = row.find("td", class_="tb_item")
                 if main_cell:                    
                     # Se encontrar um item principal, inicializa o dicionário
                     item_name = utils.remove_space(main_cell.text)
@@ -39,16 +39,16 @@ def dag_vitbrasil_extract_production():
                     data.append(current_item)
                 else:
                     # Se não for item principal, processa como subitem
-                    sub_cells = row.find_all('td')
+                    sub_cells = row.find_all("td")
                     if sub_cells and len(sub_cells) > 1:
 
                         sub_item_name = utils.remove_space(sub_cells[0].text)
                         
-                        if not 'Total' in sub_item_name:
+                        if not "Total" in sub_item_name:
                             sub_item_value = utils.convert_to_int(sub_cells[1].text.replace(" ", "").replace("\n","").replace(".", "")) 
                             current_item[item_name][sub_item_name] = sub_item_value
         
-        kwargs['ti'].xcom_push(key="dados", value=data)
+        kwargs["ti"].xcom_push(key="dados", value=data)
 
     @task()
     def save_on_database(**kwargs):
