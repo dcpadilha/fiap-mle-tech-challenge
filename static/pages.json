@@ -1,0 +1,24 @@
+{
+    "links": [
+        { 
+            "option" : "opt_02",
+            "tab" : "PRODUCAO"
+        },
+        { 
+            "option" : "opt_03",
+            "tab" : "PROCESSAMENTO"
+        },
+        { 
+            "option" : "opt_04",
+            "tab" : "COMERCIALIZACAO"
+        },
+        { 
+            "option" : "opt_05",
+            "tab" : "IMPORTACAO"
+        },
+        { 
+            "option" : "opt_06",
+            "tab" : "EXPORTACAO"
+        }
+    ]
+}
