@@ -1,34 +1,29 @@
 from airflow.decorators import dag, task
+from airflow.models.taskinstance import TaskInstance
 import pendulum
 from bs4 import BeautifulSoup
 import requests
 
-import json
 import utils
-from enum import Enum
-import os
-
-from airflow.macros import ds_add
-
 
 @dag(
     schedule = "@yearly",
     start_date = pendulum.datetime(1970, 1, 1, tz="UTC"),
     catchup = True,
 )
-def dag_vitbrasil_extract_process():
+def dag_vitbrasil_extract_production():
 
-    data = []
+    @task(retries=1)
+    def run_scrapping(ds = None, ds_nodash = None, **kwargs):
 
-    @task()
-    def run_scrapping(ds = None, ds_nodash = None):
+        data = []
 
-        base_url = f"http://vitibrasil.cnpuv.embrapa.br/index.php?ano={ds[:4]}opcao=opt_02"
+        base_url = f"http://vitibrasil.cnpuv.embrapa.br/index.php?ano={ds[:4]}&opcao=opt_02"
         html_page = requests.get(base_url).text
         soup = BeautifulSoup(html_page, "html.parser")
 
         tables = soup.find_all('table', class_='tb_base tb_dados')
-
+        
         for table in tables:
             rows = table.find_all('tr')
 
@@ -52,25 +47,13 @@ def dag_vitbrasil_extract_process():
                         if not 'Total' in sub_item_name:
                             sub_item_value = utils.convert_to_int(sub_cells[1].text.replace(" ", "").replace("\n","").replace(".", "")) 
                             current_item[item_name][sub_item_name] = sub_item_value
+        
+        kwargs['ti'].xcom_push(key="dados", value=data)
 
     @task()
-    def save_json(ds = None, ds_nodash = None):
+    def save_on_database(**kwargs):
+        utils.save_database(kwargs["ti"].xcom_pull(key="dados"), "Producao")
 
-        directory = f"./data/Production/"
-        filename = f"Production_{ds[:4]}.json"
-        filepath = os.path.join(directory, filename)
-
-        # Garantir que o diretório existe
-        os.makedirs(directory, exist_ok=True)
-
-        with open(f"{filepath}", "w", encoding="utf-8") as json_file:
-            json.dump(data, json_file, indent=4,  ensure_ascii=False)
-        
-            print(f"salvou em: {filepath}")
-        
-
-    run_scrapping()
-    save_json()
-            
-dag_vitbrasil_extract_process()
-
+    run_scrapping() >> save_on_database()
+    
+dag_vitbrasil_extract_production()
