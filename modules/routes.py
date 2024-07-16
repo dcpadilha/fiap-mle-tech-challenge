@@ -18,7 +18,7 @@ from modules.security import (
 
 router = APIRouter()
 
-
+# Endpoint to scrape available download links
 @router.get('/list_links', status_code=HTTPStatus.OK)
 def list_links(request: Request, current_user=Depends(get_current_user)):
     if not current_user['user']:
