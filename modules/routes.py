@@ -15,16 +15,16 @@ from modules.security import (
     get_password_hash,
     verify_password,
 )
+from modules.user_exceptions import FileHandlingError
 
 router = APIRouter()
+
 
 # Endpoint to scrape available download links
 @router.get('/list_links', status_code=HTTPStatus.OK)
 def list_links(request: Request, current_user=Depends(get_current_user)):
     if not current_user['user']:
-        raise HTTPException(
-            status_code=HTTPStatus.UNAUTHORIZED, detail='Unauthorized'
-        )
+        raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail='Unauthorized')
 
     links = request.app.database['scrape_target'].find_one()
 
@@ -36,9 +36,7 @@ def list_links(request: Request, current_user=Depends(get_current_user)):
 @router.post('/export_file', status_code=HTTPStatus.OK)
 async def export_file(download_list: DownloadList, request: Request, current_user=Depends(get_current_user)):
     if not current_user['user']:
-        raise HTTPException(
-            status_code=HTTPStatus.UNAUTHORIZED, detail='Unauthorized'
-        )
+        raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail='Unauthorized')
 
     files_downloaded = []
 
@@ -48,9 +46,7 @@ async def export_file(download_list: DownloadList, request: Request, current_use
 
         # Raises an exception in case the file could not be downloaded
         if not downloaded_file:
-            raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST, detail='Download error, verify the link'
-            )
+            raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail='Download error, verify the link')
 
         files_downloaded.append(downloaded_file)
 
@@ -63,18 +59,17 @@ async def export_file(download_list: DownloadList, request: Request, current_use
 
 @router.get('/show_file/{filename}', status_code=HTTPStatus.OK)
 def show_file(filename: str, current_user=Depends(get_current_user)):
+    """
+    Reads the contents of a file already downloaded
+    """
+
     if not current_user['user']:
-        raise HTTPException(
-            status_code=HTTPStatus.UNAUTHORIZED, detail='Unauthorized'
-        )
-    """
-    Random text
-    """
+        raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail='Unauthorized')
 
-    file_contents = read_file(filename)
-
-    if 'error' in file_contents:
-        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=file_contents['filename'])
+    try:
+        file_contents = read_file(filename)
+    except FileHandlingError as e:
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=e.message)
 
     return file_contents
 

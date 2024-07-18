@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "2mlet-phase1"
+name = "fiap-mle-tech-challenge"
 version = "0.1.0"
 description = ""
 authors = ["Thales Gomes <thalexbr@yahoo.com.br>"]
@@ -10,12 +10,12 @@ python = "3.11.9"
 fastapi = "0.111.0"
 requests = "2.32.3"
 bs4 = "0.0.2"
-pyjwt = "^2.8.0"
+pyjwt = "2.8.0"
 pwdlib = {extras = ["argon2"], version = "^0.2.0"}
-python-multipart = "^0.0.9"
-pandas = "^2.2.2"
-pymongo = "^4.7.3"
-ipykernel = "^6.29.4"
+python-multipart = "0.0.9"
+pandas = "2.2.2"
+pymongo = "4.7.3"
+ipykernel = "6.29.4"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "8.2.2"
@@ -47,7 +47,7 @@ addopts = '-p no:warnings'
 [tool.taskipy.tasks]
 lint = 'ruff check . && ruff check . --diff'
 format = 'ruff check . --fix && ruff format .'
-run = 'fastapi dev 2mlet_phase1/app.py'
+run = 'fastapi dev fiap-mle-tech-challenge/app.py'
 pre_test = 'task lint'
-test = 'pytest -s -x --cov=2mlet_phase1 -vv'
+test = 'pytest -s -x --cov=fiap-mle-tech-challenge -vv'
 post_test = 'coverage html'

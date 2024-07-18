@@ -1,5 +1,3 @@
-
-
 import requests
 from bs4 import BeautifulSoup
 
@@ -18,7 +16,6 @@ def scrape_url(base_url) -> list:
     scraped_data = {'available_downloads': []}
 
     for target in base_url.keys():
-
         r = requests.get(base_url[target])
 
         # Parsing the HTML content
@@ -33,7 +30,7 @@ def scrape_url(base_url) -> list:
 
         # Looking for available downloads
         for anchor in anchors:
-            if (anchor.get('href').endswith('.csv')):
+            if anchor.get('href').endswith('.csv'):
                 scraped_data['available_downloads'].append(f'{protocol}{extracted_url}/{anchor.get("href")}')
 
     return scraped_data
