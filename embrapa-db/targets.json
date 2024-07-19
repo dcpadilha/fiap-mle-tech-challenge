@@ -1,0 +1,17 @@
+[{
+  "PRODUCAO": "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_02",
+  "PROCESSAMENTO": "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_03",
+  "PROCESSAMENTO_2": "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_03&subopcao=subopt_02",
+  "PROCESSAMENTO_3": "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_03&subopcao=subopt_03",
+  "PROCESSAMENTO_4": "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_03&subopcao=subopt_04",
+  "COMERCIALIZACAO": "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_04",
+  "IMPORTACAO": "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_05",
+  "IMPORTACAO_2": "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_05&subopcao=subopt_02",
+  "IMPORTACAO_3": "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_05&subopcao=subopt_03",
+  "IMPORTACAO_4": "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_05&subopcao=subopt_04",
+  "IMPORTACAO_5": "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_05&subopcao=subopt_05",
+  "EXPORTACAO": "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_06",
+  "EXPORTACAO_2": "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_06&subopcao=subopt_02",
+  "EXPORTACAO_3": "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_06&subopcao=subopt_03",
+  "EXPORTACAO_4": "http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_06&subopcao=subopt_04"
+}]

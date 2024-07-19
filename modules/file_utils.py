@@ -22,11 +22,19 @@ def read_file(filename):
 
     result_data = {dimension: []}
 
+    # Defaults the delimiter to a semicolon
+    delimiter = ';'
+
     full_path = f"{os.getenv('DOWNLOAD_FOLDER')}/{filename}"
 
     try:
+        # Infer the proper delimiter used on the file
         with open(full_path, newline='', encoding='utf-8') as csvfile:
-            csvreader = csv.reader(csvfile, delimiter=';', quotechar='|')
+            delimiter = str(csv.Sniffer().sniff(csvfile.read()).delimiter)
+        
+        # Reopening file to avoid StopIteration() exception
+        with open(full_path, newline='', encoding='utf-8') as csvfile:
+            csvreader = csv.reader(csvfile, delimiter=delimiter, quotechar='|')
 
             # Reads the first line to determine the keys from the dictionary
             keys = next(csvreader)
