@@ -19,3 +19,5 @@ export MLET_LISTENER_ARN=arn:aws:elasticloadbalancing:us-east-1:488088354816:lis
 export MLET_LISTENER_RULE_ARN=arn:aws:elasticloadbalancing:us-east-1:488088354816:listener-rule/app/mlet-prod-ALB/75521bcde2bda532/3b3e5f62f5d6d8f2/3493106540eb0dc4
 export MLET_REPO_URI=488088354816.dkr.ecr.us-east-1.amazonaws.com/fiap-mle-tech-challenge
 export DB_REPO_URI=488088354816.dkr.ecr.us-east-1.amazonaws.com/embrapa-db
+export CODEBUILD_ROLE_NAME=Cloud9-CodeBuild-Role-1721600903
+export CODEBUILD_ROLE_ARN=arn:aws:iam::488088354816:role/Cloud9-CodeBuild-Role-1721600903

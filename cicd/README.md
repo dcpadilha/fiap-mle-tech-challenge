@@ -232,3 +232,41 @@ sed -i "s%<MLET_REPO_URI>%$MLET_REPO_URI%" buildspec.yml
 
 sed -i "s%<DB_REPO_URI>%$DB_REPO_URI%" buildspec.yml
 ```
+
+```
+aws logs create-log-group --log-group-name /codebuild/fiap-mle-tech-challenge
+```
+
+```
+cat <<EoF > codebuild_trust_policy_doc.json
+{
+  "Version": "2008-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "codebuild.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EoF
+
+```
+
+```
+save_var CODEBUILD_ROLE_NAME Cloud9-CodeBuild-Role-$(date +%s)
+save_var CODEBUILD_ROLE_ARN $( \
+    aws iam create-role \
+        --role-name $CODEBUILD_ROLE_NAME \
+        --assume-role-policy-document file://codebuild_trust_policy_doc.json \
+        --query Role.Arn \
+        --output text \
+)
+aws iam attach-role-policy \
+   --role-name $CODEBUILD_ROLE_NAME \
+   --policy-arn arn\:aws\:iam::aws\:policy/AmazonEC2ContainerRegistryPowerUser
+
+```
