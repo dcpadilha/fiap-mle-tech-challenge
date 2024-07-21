@@ -350,13 +350,13 @@ Resources:
       Name: !Sub ${EnvironmentName}-Def-TG
       TargetType: ip
       HealthCheckIntervalSeconds: 10
-      HealthCheckPath: /health
+      HealthCheckPath: /ping
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
       Matcher:
         HttpCode: '200-299'
-      Port: 80
+      Port: 8000
       Protocol: HTTP
       UnhealthyThresholdCount: 10
       VpcId: !Ref VPC
@@ -374,18 +374,7 @@ Resources:
         - TargetGroupArn: !Ref 'DummyTargetGroupPublic'
           Type: 'forward'
       LoadBalancerArn: !Ref 'PublicLoadBalancer'
-      Port: 80
-      Protocol: HTTP
-  PublicLoadBalancerTestListener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    DependsOn:
-      - PublicLoadBalancer
-    Properties:
-      DefaultActions:
-        - TargetGroupArn: !Ref 'DummyTargetGroupPublic'
-          Type: 'forward'
-      LoadBalancerArn: !Ref 'PublicLoadBalancer'
-      Port: 8080
+      Port: 8000
       Protocol: HTTP
 
 
@@ -438,11 +427,6 @@ Outputs:
     Value: !Ref PublicLoadBalancerListener
     Export:
       Name: !Sub ${EnvironmentName}:PublicListener
-  TestListener:
-    Description: The ARN of the public load balancer's test listener
-    Value: !Ref PublicLoadBalancerTestListener
-    Export:
-      Name: !Sub ${EnvironmentName}:TestListener  
   ExternalUrl:
     Description: The url of the external load balancer
     Value: !Sub http://${PublicLoadBalancer.DNSName}
