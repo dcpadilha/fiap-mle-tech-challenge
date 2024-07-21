@@ -19,6 +19,11 @@ from modules.user_exceptions import FileHandlingError
 
 router = APIRouter()
 
+# Endpoint for the Load Balancer Health Check
+@router.get('/ping', status_code=HTTPStatus.OK)
+def ping():
+    # Return value doesn't matter, as long as the HTTP Status is 200
+    return "OK"
 
 # Endpoint to scrape available download links
 @router.get('/list_links', status_code=HTTPStatus.OK)

@@ -1,0 +1,8 @@
+[
+    {
+        "Type": "forward",
+        "ForwardConfig": {
+            "TargetGroups": [ { "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:488088354816:targetgroup/mlet-tg/0cba3e6e4c401834" } ]
+        }
+    }
+]

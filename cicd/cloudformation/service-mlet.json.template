@@ -1,0 +1,21 @@
+{
+    "serviceName": "mlet", 
+    "launchType": "EC2", 
+    "loadBalancers": [
+        {
+            "targetGroupArn": "${MLET_TARGET_GROUP_ARN}", 
+            "containerName": "fiap-mle-tech-challenge",
+            "containerPort": 8000
+        }
+    ], 
+    "desiredCount": 2, 
+    "cluster": "arn:aws:ecs:${AWS_REGION}:${AWS_ACCOUNT_ID}:cluster/mlet-prod", 
+    "serviceName": "mlet", 
+    "deploymentConfiguration": {
+        "maximumPercent": 200, 
+        "minimumHealthyPercent": 50
+    }, 
+    "healthCheckGracePeriodSeconds": 8, 
+    "schedulingStrategy": "REPLICA", 
+    "taskDefinition": "arn:aws:ecs:${AWS_REGION}:${AWS_ACCOUNT_ID}:task-definition/fiap-mle-tech-challenge:1"
+}

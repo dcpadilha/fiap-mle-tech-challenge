@@ -1,0 +1,48 @@
+{
+  "family": "fiap-mle-tech-challenge",
+  "networkMode": "bridge",
+  "memory": "256",
+  "requiresCompatibilities": [
+    "EC2"
+  ],
+  "containerDefinitions": [
+    {
+      "name": "fiap-mle-tech-challenge",
+      "image": "488088354816.dkr.ecr.us-east-1.amazonaws.com/fiap-mle-tech-challenge",
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/fiap-mle-tech-challenge",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true
+    },
+    {
+      "name": "embrapa-db",
+      "image": "488088354816.dkr.ecr.us-east-1.amazonaws.com/embrapa-db",
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/embrapa-db",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "portMappings": [
+        {
+          "containerPort": 27017,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true
+    }
+  ]
+}
