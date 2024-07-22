@@ -23,7 +23,7 @@ class ScrappingApp():
         self.data = []
 
     def get_base_html(self):
-        self.html_page = requests.get(f"{self.base_url}?opcao={TypeOption.Production.value}").text
+        self.html_page = requests.get(f"{self.base_url}?opcao=opt_02").text
         self.soup = BeautifulSoup(self.html_page, "html.parser")
 
     def get_years_of_data(self):
@@ -47,7 +47,7 @@ class ScrappingApp():
                     # Se encontrar um item principal, inicializa o dicionário
                     item_name = utils.remove_space(main_cell.text)
                     item_value = utils.convert_to_int(utils.remove_space(main_cell.find_next_sibling('td').text))
-                    current_item = {item_name: {"Valor Total": item_value, "Ano da Informação": "2024"}}
+                    current_item = {item_name: {"Valor Total": item_value, "Ano da Informação": ds[:4]}}
                     # print(current_item)
                     self.data.append(current_item)
                 else:
@@ -76,7 +76,7 @@ class ScrappingApp():
 
     def run(self):
         self.get_base_html()
-        self.get_years_of_data()
+        # self.get_years_of_data()
         self.get_info_page()
         
 

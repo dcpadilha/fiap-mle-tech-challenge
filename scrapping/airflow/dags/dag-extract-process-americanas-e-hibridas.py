@@ -11,14 +11,14 @@ import utils
     start_date = pendulum.datetime(1970, 1, 1, tz="UTC"),
     catchup = True,
 )
-def dag_vitbrasil_extract_production():
+def dag_vitbrasil_extract_process_americanas_hibridas():
 
     @task(retries=1)
     def run_scrapping(ds = None, ds_nodash = None, **kwargs):
 
         data = []
 
-        base_url = f"http://vitibrasil.cnpuv.embrapa.br/index.php?ano={ds[:4]}&opcao=opt_02"
+        base_url = f"http://vitibrasil.cnpuv.embrapa.br/index.php?ano={ds[:4]}&opcao=opt_03&subopcao=subopt_02"  
         html_page = requests.get(base_url).text
         soup = BeautifulSoup(html_page, "html.parser")
 
@@ -52,8 +52,8 @@ def dag_vitbrasil_extract_production():
 
     @task()
     def save_on_database(**kwargs):
-        utils.save_database(kwargs["ti"].xcom_pull(key="dados"), "Producao", "")
+        utils.save_database(kwargs["ti"].xcom_pull(key="dados"), "Processamento", "Americanas e Hibridas")
 
     run_scrapping() >> save_on_database()
     
-dag_vitbrasil_extract_production()
+dag_vitbrasil_extract_process_americanas_hibridas()

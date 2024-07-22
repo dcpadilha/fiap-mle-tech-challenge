@@ -29,7 +29,7 @@ def transform_data_list(value: str):
 def get_db_conn():
     user = "root"
     password = "root"
-    host = "172.20.10.4" 
+    host = "192.168.1.66" 
     database = "tech_challenge"
 
     conn = mysql.connector.connect(
@@ -41,7 +41,7 @@ def get_db_conn():
 
     return conn
 
-def save_database(data, typeProduct: str):
+def save_database(data, origem: str, suborigem: str):
     rows = []
     for item in data:
         for category, values in item.items():
@@ -51,7 +51,7 @@ def save_database(data, typeProduct: str):
                     "ano": year,
                     "categoria": category,
                     "subcategoria": subtipo,
-                    "valor": valor,
+                    "qtde_kg": valor,
                     "inserted_at": pendulum.now(tz='America/Sao_Paulo')
                 })
 
@@ -63,11 +63,52 @@ def save_database(data, typeProduct: str):
         if conn.is_connected():
             cursor = conn.cursor()
             insert_query = """
-                INSERT INTO vitibrasil (ano, origem, categoria, subcategoria, valor, inserted_at)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                INSERT INTO vitibrasil (ano, origem, sub_origem, categoria, sub_categoria, qtde_kg, inserted_at)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """
             for _, row in df.iterrows():
-                cursor.execute(insert_query, (row['ano'], typeProduct, row['categoria'], row['subcategoria'], row['valor'], row['inserted_at']))
+                cursor.execute(insert_query, (row['ano'], origem, suborigem, row['categoria'], row['subcategoria'], row['qtde_kg'], row['inserted_at']))
+
+            conn.commit()
+        else:
+            raise Exception("Conexão com o MySQL inexistente")
+
+    except Error as e:
+        print(f"Erro ao conectar ao MySQL: {e}")
+        sys.exit(1)
+
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+        
+def save_database_value_and_qtde(data, origem: str, suborigem: str):
+    rows = []
+    for item in data:
+        for category, values in item.items():
+            rows.append({
+              "ano": values.get("Ano da Informação"),
+              "categoria": category,
+              "subcategoria": "",
+              "valor": values.get('valor'),
+              "qtde_kg": values.get('quantidade'),
+              "inserted_at": "2023-01-01"
+          })
+
+    df = pd.DataFrame(rows)
+
+    try:
+        conn = get_db_conn()
+
+        if conn.is_connected():
+            cursor = conn.cursor()
+            insert_query = """
+                INSERT INTO vitibrasil (ano, origem, sub_origem, categoria, sub_categoria, qtde_kg, valor, inserted_at)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """
+            for _, row in df.iterrows():
+                cursor.execute(insert_query, (row['ano'], origem, suborigem, row['categoria'], row['subcategoria'], row['qtde_kg'], row['valor'], row['inserted_at']))
 
             conn.commit()
         else:

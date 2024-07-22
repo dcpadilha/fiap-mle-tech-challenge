@@ -1,4 +1,5 @@
 import logging
+import mysql.connector
 
 def get_logger(name):
     logger = logging.getLogger(name)
@@ -20,3 +21,18 @@ def clone_log_config(base_logger: logging.Logger, target_logger: logging.Logger)
     target_logger.handlers.clear()
     target_logger.addHandler(base_logger.handlers[0])
     target_logger.setLevel(base_logger.level)
+
+def get_db_conn():
+    user = "root"
+    password = "root"
+    host = "172.20.10.4" 
+    database = "tech_challenge"
+
+    conn = mysql.connector.connect(
+        user=user,
+        password=password,
+        host=host,
+        database=database
+    )      
+
+    return conn
