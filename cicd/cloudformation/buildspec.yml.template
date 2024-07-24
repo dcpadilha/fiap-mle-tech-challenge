@@ -1,0 +1,32 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - MLET_URI=<MLET_REPO_URI>
+      - DB_URI=<DB_REPO_URI>
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $MLET_URI
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t $MLET_URI:latest .
+      - docker tag $MLET_URI:latest $MLET_URI:$IMAGE_TAG
+      - docker build -t $DB_URI:latest ./embrapa-db
+      - docker tag $DB_URI:latest $DB_URI:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $MLET_URI:latest
+      - docker push $MLET_URI:$IMAGE_TAG
+      - docker push $DB_URI:latest
+      - docker push $DB_URI:$IMAGE_TAG
+      - echo Writing image definitions file...
+      - printf '[{"name":"fiap-mle-tech-challenge","imageUri":"%s"},{"name":"embrapa-db","imageUri":"%s"}]' $MLET_URI:$IMAGE_TAG $DB_URI:$IMAGE_TAG  > imagedefinitions.json
+artifacts:
+    files: imagedefinitions.json

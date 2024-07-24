@@ -25,7 +25,7 @@ echo "[[ -s ~/env-vars.sh ]] && source ~/env-vars.sh" >> ~/.bash_profile
 Define the project name
 
 ```
-save_var PROJECT 2mletphase1
+save_var PROJECT phase12mlet
 ```
 
 2. Install AWS Command Line Interface (awscli)
@@ -136,7 +136,7 @@ aws ecs register-task-definition --cli-input-json file://task-definition.json
 ```
 save_var MLET_VPC $( \
   aws cloudformation describe-stacks \
-  --stack-name mlet-cluster \
+  --stack-name phase12mlet \
   --query "Stacks[0].Outputs[?OutputKey == 'VpcId'].OutputValue" \
   --output text \
 )
@@ -182,7 +182,7 @@ cat <<EoF >actions.json
 EoF
 save_var MLET_LISTENER_ARN $( \
   aws cloudformation describe-stacks \
-  --stack-name mlet-cluster \
+  --stack-name phase12mlet \
   --query "Stacks[0].Outputs[?OutputKey == 'PublicListener'].OutputValue" \
   --output text \
 )
@@ -196,6 +196,10 @@ save_var MLET_LISTENER_RULE_ARN $( \
     --output text \
 )
 
+```
+
+```
+save_var AWS_ACCOUNT_ID `aws sts get-caller-identity --query Account --output text`
 ```
 
 ```
@@ -228,9 +232,9 @@ echo Repo URI: $DB_REPO_URI
 ```
 
 ```
-sed -i "s%<MLET_REPO_URI>%$MLET_REPO_URI%" buildspec.yml
+sed -i "s%<MLET_REPO_URI>%$MLET_REPO_URI%" buildspec.yml.template > ../buildspec.yml
 
-sed -i "s%<DB_REPO_URI>%$DB_REPO_URI%" buildspec.yml
+sed -i "s%<DB_REPO_URI>%$DB_REPO_URI%" buildspec.yml.template > ../buildspec.yml
 ```
 
 ```
