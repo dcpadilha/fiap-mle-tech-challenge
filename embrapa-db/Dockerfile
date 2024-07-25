@@ -1,4 +1,4 @@
-FROM mongo:8.0.0-rc13-jammy
+FROM public.ecr.aws/docker/library/mongo:8.0.0-rc13-jammy
 
 WORKDIR /localfiles
 
