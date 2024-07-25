@@ -6,11 +6,6 @@ save_var() {
     echo export $1=$2 >> ~/projects/fiap-mle-tech-challenge/cicd/scripts/env-vars.sh
   fi
 }
-export PROJECT=2mlet-phase1
-export AWS_REGION=sa-east-1
-export PROJECT=2mletphase1
-export PROJECT=phase1-2mlet
-export AWS_REGION=us-east-1=
 export AWS_REGION=us-east-1
 export AWS_ACCOUNT_ID=488088354816
 export MLET_VPC=vpc-0aa2ef51405ee8b76
