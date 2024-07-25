@@ -1,5 +1,7 @@
 FROM public.ecr.aws/docker/library/mongo:8.0.0-rc13-jammy
 
+ENV CREATE_DB=true
+
 WORKDIR /localfiles
 
 COPY . /localfiles/
