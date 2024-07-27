@@ -20,22 +20,23 @@ from modules.user_exceptions import FileHandlingError
 router = APIRouter()
 
 # Endpoint for the Load Balancer Health Check
-@router.get('/mlet/ping', status_code=HTTPStatus.OK)
+@router.get('/ping', status_code=HTTPStatus.OK)
 def ping():
     # Return value doesn't matter, as long as the HTTP Status is 200
     return "OK"
 
 # Endpoint to scrape available download links
 @router.get('/list_links', status_code=HTTPStatus.OK)
-def list_links(request: Request, current_user=Depends(get_current_user)):
-    if not current_user['user']:
-        raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail='Unauthorized')
+def list_links(request: Request):
+    # if not current_user['user']:
+    #     raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail='Unauthorized')
+    links = { 'links' : [ 'link1', 'link2'] }
+    # links = request.app.database['scrape_target'].find_one()
 
-    links = request.app.database['scrape_target'].find_one()
+    # links.pop('_id')
 
-    links.pop('_id')
-
-    return scrape_url(links)
+    #return scrape_url(links)
+    return links
 
 
 @router.post('/export_file', status_code=HTTPStatus.OK)

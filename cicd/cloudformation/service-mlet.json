@@ -3,13 +3,13 @@
     "launchType": "EC2", 
     "loadBalancers": [
         {
-            "targetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:488088354816:targetgroup/mlet-tg/0cba3e6e4c401834", 
+            "targetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:488088354816:targetgroup/mlet-tg/2d1e49719d0c6181", 
             "containerName": "fiap-mle-tech-challenge",
             "containerPort": 8000
         }
     ], 
     "desiredCount": 2, 
-    "cluster": "arn:aws:ecs:us-east-1:488088354816:cluster/mlet-prod", 
+    "cluster": "arn:aws:ecs:us-east-1:488088354816:cluster/mlet", 
     "serviceName": "mlet", 
     "deploymentConfiguration": {
         "maximumPercent": 200, 
@@ -17,5 +17,5 @@
     }, 
     "healthCheckGracePeriodSeconds": 8, 
     "schedulingStrategy": "REPLICA", 
-    "taskDefinition": "arn:aws:ecs:us-east-1:488088354816:task-definition/fiap-mle-tech-challenge:1"
+    "taskDefinition": "arn:aws:ecs:us-east-1:488088354816:task-definition/fiap-mle-tech-challenge:14"
 }
