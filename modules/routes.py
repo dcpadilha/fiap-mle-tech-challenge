@@ -1,4 +1,5 @@
 from http import HTTPStatus
+import os
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordRequestForm
@@ -25,6 +26,12 @@ def ping():
     # Return value doesn't matter, as long as the HTTP Status is 200
     return 'OK'
 
+@router.get('/db_test', status_code=HTTPStatus.OK)
+def db_test(request: Request):
+        try:
+            request.app.database.get_scrape_links()
+        except Exception as e:
+            return { "db_host": os.getenv('DB_HOST'), "error": repr(e) }
 
 # Endpoint to scrape available download links
 @router.get('/list_links', status_code=HTTPStatus.OK)
