@@ -37,15 +37,18 @@ def db_test(request: Request):
 @router.get('/list_links', status_code=HTTPStatus.OK)
 def list_links(request: Request, current_user=Depends(get_current_user)):
     if not current_user['user']:
-        raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail='Unauthorized')
+        return "No user"
+    else:
+        return current_user
+    #     raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail='Unauthorized')
 
-    # links = get_scrape_links(request)
-    links = request.app.database.get_scrape_links()
-    print(f'Links to be scraped: {links}')
+    # # links = get_scrape_links(request)
+    # links = request.app.database.get_scrape_links()
+    # print(f'Links to be scraped: {links}')
 
-    # links.pop('_id')
+    # # links.pop('_id')
 
-    return scrape_url(links)
+    # return scrape_url(links)
 
 
 @router.post('/export_file', status_code=HTTPStatus.OK)
