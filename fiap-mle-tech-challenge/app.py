@@ -8,23 +8,18 @@ from modules.database import Database
 # User Modules
 from modules.routes import router
 
-# Loads variables from .env file, but does not overwrite existing ones
-# Not overwriting will support dockerization in the future (hopefully)
-# Environment variables will be provided by static .env file or by arguments
+# Loads variables from .env file
 load_dotenv(override=True)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Creates MongoDB connection during application startup
-    # app.mongodb_client = MongoClient(os.getenv('MONGODB_HOST'))
-    # app.database = app.mongodb_client[os.getenv('MONGODB_COLLECTION')]
-
+    # Connects to the database and creates a session that will be available for the other modules
     app.database = Database()
     app.database.connect()
 
     yield
-    # Closes MongoDB connection on application shutdown
+    # Closes the database session
     app.database.session.close()
 
 

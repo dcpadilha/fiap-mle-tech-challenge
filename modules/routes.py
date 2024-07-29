@@ -41,7 +41,7 @@ def ping():
     --------
     Nothing to be presented as example. This is a simple GET call.
     """
-    return 'OK'
+    return 'pong'
 
 
 @router.get('/list_links', status_code=HTTPStatus.OK)
