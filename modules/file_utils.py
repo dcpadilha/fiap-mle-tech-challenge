@@ -81,6 +81,6 @@ def download_file(file_link: str):
         with open(save_path, 'wb') as fp:
             fp.write(file_data)
     except Exception as e:
-        return f'Error saving file:{repr(e)}'
+        return f'Error saving file "{file_name}":{repr(e)}'
     
     return file_name
