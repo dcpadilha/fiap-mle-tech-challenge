@@ -3,9 +3,9 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo Logging in to Amazon ECR....
+      - echo Logging in to Amazon ECR...
       - aws --version
-      - MLET_URI=488088354816.dkr.ecr.us-east-1.amazonaws.com/fiap-mle-tech-challenge
+      - MLET_URI=488088354816.dkr.ecr.us-east-1.amazonaws.com/mlet
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $MLET_URI
@@ -22,6 +22,6 @@ phases:
       - docker push $MLET_URI:latest
       - docker push $MLET_URI:$IMAGE_TAG
       - echo Writing image definitions file...
-      - printf '[{"name":"fiap-mle-tech-challenge","imageUri":"%s"}]' $MLET_URI:$IMAGE_TAG $DB_URI:$IMAGE_TAG  > imagedefinitions.json
+      - printf '[{"name":"fiap-mle-tech-challenge","imageUri":"%s"}]' $MLET_URI:$IMAGE_TAG > imagedefinitions.json
 artifacts:
     files: imagedefinitions.json
