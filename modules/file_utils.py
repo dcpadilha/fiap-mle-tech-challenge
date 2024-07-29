@@ -68,14 +68,19 @@ def download_file(file_link: str):
     if not file_link.endswith('.csv'):
         return None
 
-    file_data = requests.get(file_link).content
+    try:
+        file_data = requests.get(file_link).content
+    except Exception as e:
+        return repr(e)
 
     # Assigning the current date and time to the filename
     file_name = current_datetime + '-' + file_link.split('/')[-1]
 
     save_path = os.getenv('DOWNLOAD_FOLDER') + file_name
-
-    with open(save_path, 'wb') as fp:
-        fp.write(file_data)
-
+    try:
+        with open(save_path, 'wb') as fp:
+            fp.write(file_data)
+    except Exception as e:
+        return repr(e)
+    
     return file_name
