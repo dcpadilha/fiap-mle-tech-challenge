@@ -29,7 +29,7 @@ def ping():
 @router.get('/db_test', status_code=HTTPStatus.OK)
 def db_test(request: Request):
         try:
-            request.app.database.get_scrape_links()
+            return request.app.database.get_scrape_links()
         except Exception as e:
             return { "db_host": os.getenv('DB_HOST'), "error": repr(e) }
 
