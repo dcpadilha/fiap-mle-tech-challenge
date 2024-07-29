@@ -15,22 +15,24 @@ def scrape_url(base_url) -> list:
 
     scraped_data = {'available_downloads': []}
 
-    for target in base_url.keys():
-        r = requests.get(base_url[target])
+    return base_url
 
-        # Parsing the HTML content
-        soup = BeautifulSoup(r.content, 'html.parser')
+    # for target in base_url.keys():
+    #     r = requests.get(base_url[target])
 
-        extracted_url = base_url[target].split('/')[2]
+    #     # Parsing the HTML content
+    #     soup = BeautifulSoup(r.content, 'html.parser')
 
-        protocol = 'http://'
+    #     extracted_url = base_url[target].split('/')[2]
 
-        # Extracting elements with the <a> tag to find possible downloads
-        anchors = soup.find_all('a')
+    #     protocol = 'http://'
 
-        # Looking for available downloads
-        for anchor in anchors:
-            if anchor.get('href').endswith('.csv'):
-                scraped_data['available_downloads'].append(f'{protocol}{extracted_url}/{anchor.get("href")}')
+    #     # Extracting elements with the <a> tag to find possible downloads
+    #     anchors = soup.find_all('a')
 
-    return scraped_data
+    #     # Looking for available downloads
+    #     for anchor in anchors:
+    #         if anchor.get('href').endswith('.csv'):
+    #             scraped_data['available_downloads'].append(f'{protocol}{extracted_url}/{anchor.get("href")}')
+
+    # return scraped_data
