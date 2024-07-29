@@ -23,19 +23,56 @@ router = APIRouter()
 # Endpoint for the Load Balancer Health Check
 @router.get('/ping', status_code=HTTPStatus.OK)
 def ping():
-    # Return value doesn't matter, as long as the HTTP Status is 200
+    """
+    Dummy endpoint to return HTTP Status 200.
+    Return value doesn't matter, as long as the HTTP Status is 200.
+    This endpoint is used by the ECS service to validate that the container is successfully deployed.
+
+    Parameters
+    ----------
+    No parameters required to call this endpoint.
+
+    Returns
+    -------
+    str
+        This endpoint will return the string "OK".
+
+    Examples
+    --------
+    Nothing to be presented as example. This is a simple GET call.
+    """
     return 'OK'
 
-@router.get('/db_test', status_code=HTTPStatus.OK)
-def db_test(request: Request):
-        try:
-            return request.app.database.get_scrape_links()
-        except Exception as e:
-            return { "db_host": os.getenv('DB_HOST'), "error": repr(e) }
 
-# Endpoint to scrape available download links
 @router.get('/list_links', status_code=HTTPStatus.OK)
 def list_links(request: Request, current_user=Depends(get_current_user)):
+    """
+    Endpoint to scrape available download links
+
+    Parameters
+    ----------
+    request : Request
+        The Request object used to access the database.
+    current_user : dict
+        Injected by the get_current_user dependency.
+
+    Returns
+    -------
+    dict
+        A dictionary containing a list of available download links.
+
+    Examples
+    --------
+    A simple GET call on this endpoint should return an output similar to the below:
+
+    {
+        "available_downloads": [
+            "http://vitibrasil.cnpuv.embrapa.br/download/Producao.csv",
+            ... output ommitted 
+            "http://vitibrasil.cnpuv.embrapa.br/download/ExpSuco.csv"
+        ]
+    }
+    """
     if not current_user['user']:
         raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail='Unauthorized')
 
@@ -55,6 +92,7 @@ async def export_file(download_list: DownloadList, request: Request, current_use
 
     files_downloaded = []
 
+    # Goes through a list of URLs with the download links
     for link in download_list.available_downloads:
         # Downloads the file and returns the generated filename
         downloaded_file = download_file(link)
@@ -63,6 +101,7 @@ async def export_file(download_list: DownloadList, request: Request, current_use
         if not downloaded_file:
             raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail='Download error, verify the link')
 
+        # Appends the generated file name to the list which will be returned by the API
         files_downloaded.append(downloaded_file)
 
     return {'files': files_downloaded}
