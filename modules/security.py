@@ -22,10 +22,12 @@ def create_access_token(data: dict):
 
 
 def get_password_hash(password: str):
+    # This function returns a simple hash, in real production a key-based encryption should be used
     return pwd_context.hash(password)
 
 
 def verify_password(plain_password: str, hashed_password: str):
+    print(f'Plain: {plain_password}, Hashed: !{hashed_password}!')
     return pwd_context.verify(plain_password, hashed_password)
 
 
@@ -50,11 +52,11 @@ async def get_current_user(
         raise credentials_exception
 
     query = {'user': token_data}
-    user = request.app.database['users'].find_one(query)
+    user = request.app.database.get_user_info(query)
 
     if user is None:
         raise credentials_exception
 
-    user.pop('_id')
+    # user.pop('_id')
 
     return user
