@@ -7,3 +7,4 @@ PyJWT==2.8.0
 apache-airflow
 pendulum==3.0.0
 mysql-connector-python==9.0.0
+SQLAlchemy==2.0.31
