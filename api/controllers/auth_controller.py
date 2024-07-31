@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from datetime import timedelta
 from config.jwt import create_access_token, Token
 
-router = APIRouter()
+router = APIRouter(prefix="/api/v1")
 
 class UserLogin(BaseModel):
     username: str

@@ -7,7 +7,7 @@ from typing import List, Optional
 from config.jwt import verify_token, TokenData
 
 
-router = APIRouter()
+router = APIRouter(prefix="/api/v1")
 
 def get_db():
     db = SessionLocal()

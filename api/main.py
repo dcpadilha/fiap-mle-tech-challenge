@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from controllers import auth_controller
-from controllers import vitibrasil_controller
+from controllers import auth_controller, vitibrasil_controller, dags_airflow_controller
 import logging
 from util import get_logger, clone_log_config
 
@@ -13,6 +12,7 @@ app = FastAPI()
 
 app.include_router(vitibrasil_controller.router)
 app.include_router(auth_controller.router)
+app.include_router(dags_airflow_controller.router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
