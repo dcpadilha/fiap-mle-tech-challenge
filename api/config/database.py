@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 
 # URL de conexão com o banco de dados
 # Exemplo: "mysql+pymysql://usuario:senha@localhost/dbname"
-DATABASE_URL = "mysql+mysqlconnector://root:root@localhost/tech_challenge"
+DATABASE_URL = "mysql+mysqlconnector://root:root@mysql/tech_challenge"
 
 # Cria o engine (motor) de conexão
 engine = create_engine(DATABASE_URL)

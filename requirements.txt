@@ -4,9 +4,9 @@ pandas==2.2.2
 requests==2.32.3
 fastapi==0.111.0
 PyJWT==2.8.0
-apache-airflow
+apache-airflow==2.9.2
 pendulum==3.0.0
 mysql-connector-python==9.0.0
-SQLAlchemy==2.0.31
+SQLAlchemy==1.4.36
 pyjwt==2.8.0
-requests==2.5
+#requests==2.5

@@ -85,6 +85,8 @@ x-airflow-common:
       condition: service_healthy
     postgres:
       condition: service_healthy
+    mysql:
+      condition: service_healthy
 
 services:
   postgres:
@@ -97,6 +99,20 @@ services:
       - postgres-db-volume:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: always
+
+  mysql:
+    image: mysql:8.4.2
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tech_challenge
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       interval: 10s
       retries: 5
       start_period: 5s
@@ -284,6 +300,22 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-
+  mle-api:
+    build:
+      context: .
+      dockerfile: ./DockerFile.api
+    ports:
+      - "80:80"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: "always"
+    depends_on:
+      mysql:
+        condition: service_healthy
 volumes:
   postgres-db-volume:
+  mysql-data:
