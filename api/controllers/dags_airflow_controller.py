@@ -3,7 +3,7 @@ import requests
 from config.jwt import verify_token, TokenData
 
 
-AIRFLOW_API_URL = "http://localhost:8080/api/v1/dags"
+AIRFLOW_API_URL = "http://airflow-webserver:8080/api/v1/dags"
 
 router = APIRouter(prefix="/api/v1")
 
