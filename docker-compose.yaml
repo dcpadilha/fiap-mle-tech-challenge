@@ -131,6 +131,17 @@ services:
     command:
       - -c
       - |
+        retries=0
+        while [ $$retries -le 5 ]
+        do
+          if mysqladmin ping -h mysql -proot ; then
+            echo "DB access OK"
+            ((retries=10))
+          else
+            echo "DB access error...retrying"
+            ((retries++))
+          fi
+        done
         if mysql -h "mysql" -u "root" -p"root" -e "USE tech_challenge" &> /dev/null; then
             echo "Database 'tech_challenge' already exists."
         else
