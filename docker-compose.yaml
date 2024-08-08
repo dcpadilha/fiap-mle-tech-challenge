@@ -118,12 +118,35 @@ services:
       start_period: 5s
     restart: always
 
+# Inicializando o banco de dados MySQL
   mysql-init:
     image: mysql:8.4.2
+    entrypoint: /bin/bash
     environment:
-      MYSQL_DATABASE: tech_challenge
-    command: [ "sh", "-c", "echo ${MYSQL_DATABASE}" ]
+      DB_NAME: tech_challenge
+      TABLE_NAME: vitibrasil
+      MYSQL_USER: root
+      MYSQL_PWD: root
+      MYSQL_DB: mysql 
+    command:
+      - -c
+      - |
+        if mysql -h "$MYSQL_DB" -u "$MYSQL_USER" -p "$MYSQL_PWD" -e "USE $DB_NAME" &> /dev/null; then
+            echo "Database '$DB_NAME}' already exists."
+        else
+            mysql -h "$MYSQL_DB" -u "$MYSQL_USER" -p "$MYSQL_PWD" -e "CREATE DATABASE IF NOT EXISTS $DB_NAME"
+            echo "Database '$DB_NAME}' created."
+        fi
 
+        if mysql -h "$MYSQL_DB" -u "$MYSQL_USER" -p "$MYSQL_PWD" -e "USE $DB_NAME}; DESCRIBE $TABLE_NAME" &> /dev/null; then
+            echo "Table '$TABLE_NAME}' already exists."
+        else
+            mysql -h "$MYSQL_DB" -u "$MYSQL_USER" -p "$MYSQL_PWD" -e "USE $DB_NAME}; CREATE TABLE $TABLE_NAME} (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255))"
+            echo "Table '$TABLE_NAME}' created."
+        fi 
+    depends_on:
+      mysql:
+        condition: service_healthy
 
   redis:
     # Redis is limited to 7.2-bookworm due to licencing change
