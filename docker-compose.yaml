@@ -120,17 +120,17 @@ services:
 
   mysql-init:
     image: mysql:8.4.2
-    entrypoint: /bin/bash
+    depends_on:
+      mysql:
+        condition: service_healthy
     environment:
       DB_NAME: tech_challenge
       TABLE_NAME: vitibrasil
       MYSQL_USER: root
       MYSQL_PWD: root
       MYSQL_DB: mysql
-    command: [ "bash", "-c", "echo ${DB_NAME}" ]
-    depends_on:
-      mysql:
-        condition: service_healthy
+    command: [ "sh", "-c", "echo ${DB_NAME}" ]
+
 
   redis:
     # Redis is limited to 7.2-bookworm due to licencing change
