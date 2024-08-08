@@ -122,11 +122,11 @@ services:
     image: mysql:8.4.2
     entrypoint: /bin/bash
     environment:
-      DB_NAME: 'tech_challenge'
-      TABLE_NAME: 'vitibrasil'
-      MYSQL_USER: 'root'
-      MYSQL_PWD: 'root'
-      MYSQL_DB: 'mysql'
+      DB_NAME: ${DB_NAME:-tech_challenge}
+      TABLE_NAME: ${TABLE_NAME:-vitibrasil}
+      MYSQL_USER: ${MYSQL_USER:-root}
+      MYSQL_PWD: ${MYSQL_PWD:-root}
+      MYSQL_DB: ${MYSQL_DB:-mysql}
     command:
       - -c
       - |
