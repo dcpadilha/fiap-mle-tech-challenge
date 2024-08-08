@@ -124,12 +124,8 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      DB_NAME: tech_challenge
-      TABLE_NAME: vitibrasil
-      MYSQL_USER: root
-      MYSQL_PWD: root
-      MYSQL_DB: mysql
-    command: [ "sh", "-c", "echo ${DB_NAME}" ]
+      MYSQL_DATABASE: tech_challenge
+    command: [ "sh", "-c", "echo ${MYSQL_DATABASE}" ]
 
 
   redis:
