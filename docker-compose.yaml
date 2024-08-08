@@ -121,6 +121,12 @@ services:
   mysql-init:
     image: mysql:8.4.2
     entrypoint: /bin/bash
+    environment:
+      DB_NAME: 'tech_challenge'
+      TABLE_NAME: 'vitibrasil'
+      MYSQL_USER: 'root'
+      MYSQL_PWD: 'root'
+      MYSQL_DB: 'mysql'
     command:
       - -c
       - |
@@ -137,12 +143,6 @@ services:
             mysql -h "${MYSQL_DB}" -u "${MYSQL_USER}" -p "${MYSQL_PWD}" -e "USE ${DB_NAME}; CREATE TABLE ${TABLE_NAME} (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255))"
             echo "Table '${TABLE_NAME}' created."
         fi 
-    environment:
-      DB_NAME: 'tech_challenge'
-      TABLE_NAME: 'vitibrasil'
-      MYSQL_USER: 'root'
-      MYSQL_PWD: 'root'
-      MYSQL_DB: 'mysql'
     depends_on:
       mysql:
         condition: service_healthy
