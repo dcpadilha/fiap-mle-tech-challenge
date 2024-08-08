@@ -7,6 +7,9 @@ __pycache__/
 *.so
 
 temp/
+plugins/
+dags/
+logs/
 
 # Distribution / packaging
 .Python
