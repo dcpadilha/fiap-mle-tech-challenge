@@ -130,19 +130,7 @@ services:
     command:
       - -c
       - |
-        if mysql -h "${MYSQL_DB}" -u "${MYSQL_USER}" -p "${MYSQL_PWD}" -e "USE ${DB_NAME}" &> /dev/null; then
-            echo "Database '${DB_NAME}' already exists."
-        else
-            mysql -h "${MYSQL_DB}" -u "${MYSQL_USER}" -p "${MYSQL_PWD}" -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME}"
-            echo "Database '${DB_NAME}' created."
-        fi
-
-        if mysql -h "${MYSQL_DB}" -u "${MYSQL_USER}" -p "${MYSQL_PWD}" -e "USE ${DB_NAME}; DESCRIBE ${TABLE_NAME}" &> /dev/null; then
-            echo "Table '${TABLE_NAME}' already exists."
-        else
-            mysql -h "${MYSQL_DB}" -u "${MYSQL_USER}" -p "${MYSQL_PWD}" -e "USE ${DB_NAME}; CREATE TABLE ${TABLE_NAME} (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255))"
-            echo "Table '${TABLE_NAME}' created."
-        fi 
+        echo ${DB_NAME}
     depends_on:
       mysql:
         condition: service_healthy
