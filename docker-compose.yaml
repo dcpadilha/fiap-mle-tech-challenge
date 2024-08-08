@@ -127,10 +127,7 @@ services:
       MYSQL_USER: root
       MYSQL_PWD: root
       MYSQL_DB: mysql
-    command:
-      - -c
-      - |
-        echo ${DB_NAME}
+    command: [ "sh", "-c", "echo ${DB_NAME}" ]
     depends_on:
       mysql:
         condition: service_healthy
