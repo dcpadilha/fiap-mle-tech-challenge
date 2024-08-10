@@ -17,12 +17,23 @@ def get_db():
         db.close()
 
 @router.get("/vitibrasil/", response_model=List[ivitibrasil_repository.VitiBrasilInDB])
-def read_vitibrasil(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+def read_vitibrasil(
+    skip: int = 0, 
+    limit: int = 10, 
+    db: Session = Depends(get_db), 
+    authorization: TokenData = Depends(get_current_user)
+):
+    
     vitibrasil = vitibrasil_repository.get_all_vitibrasil(db)
     return vitibrasil
 
 @router.get("/vitibrasil/{id}", response_model=ivitibrasil_repository.VitiBrasilInDB)
-def read_vitibrasil(id: int, db: Session = Depends(get_db)):
+def read_vitibrasil(
+    id: int, 
+    db: Session = Depends(get_db), 
+    authorization: TokenData = Depends(get_current_user
+)):
+    
     vitibrasil = vitibrasil_repository.get_vitibrasil_by_id(db, id)
     if vitibrasil is None:
         raise HTTPException(status_code=404, detail="Item not found")

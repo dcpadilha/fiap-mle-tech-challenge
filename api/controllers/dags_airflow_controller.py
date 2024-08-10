@@ -15,7 +15,7 @@ def get_dags(
     authorization: TokenData = Depends(get_current_user)
 ):
     if authorization.role != 'ADMIN':
-        raise HTTPException(status_code=401, detail="Não autorizado (somente perfil ADMIN)")
+        raise HTTPException(status_code=401, detail=f"Usuário {authorization.username} não está autorizado (somente perfil ADMIN). Perfil atual: {authorization.role}")
     try:
         response = requests.get(AIRFLOW_API_URL, auth=AUTH)
         response.raise_for_status()  # Levanta um erro se a resposta não for 2xx
