@@ -4,7 +4,7 @@ from interfaces import ivitibrasil_repository
 from repositories import vitibrasil_repository
 from config.database import SessionLocal
 from typing import List, Optional
-from config.jwt import get_current_user
+from config.jwt import get_current_user, TokenData
 
 
 router = APIRouter(prefix="/api/v1")
@@ -36,8 +36,9 @@ def read_vitibrasil(
     ano_min: Optional[str] = None,
     ano_max: Optional[str] = None,
     db: Session = Depends(get_db),
-    authorization: str = Depends(get_current_user) 
+    authorization: TokenData = Depends(get_current_user) 
 ):
+
     if categoria:
         vitibrasil = vitibrasil_repository.get_vitibrasil_by_categoria_and_year_range(
             db, categoria, ano_min=ano_min, ano_max=ano_max, skip=skip, limit=limit
@@ -58,7 +59,7 @@ def read_vitibrasil(
     ano_min: Optional[str] = None,
     ano_max: Optional[str] = None,
     db: Session = Depends(get_db),
-    authorization: str = Depends(get_current_user) 
+    authorization: TokenData = Depends(get_current_user)
 ):
     if origem:
         vitibrasil = vitibrasil_repository.get_vitibrasil_by_origem_and_year_range(

@@ -2,7 +2,7 @@ import jwt
 from datetime import datetime, timedelta
 from typing import Optional
 from pydantic import BaseModel
-from fastapi import Depends, HTTPException, Request
+from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from zoneinfo import ZoneInfo
 from http import HTTPStatus
