@@ -42,3 +42,4 @@ def get_vitibrasil_by_origem_and_year_range(
         query = query.filter(VitiBrasil.ano <= ano_max)
     
     return query.offset(skip).limit(limit).all()
+

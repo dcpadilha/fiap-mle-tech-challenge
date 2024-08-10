@@ -4,7 +4,7 @@ from interfaces import ivitibrasil_repository
 from repositories import vitibrasil_repository
 from config.database import SessionLocal
 from typing import List, Optional
-from config.jwt import verify_token, TokenData
+from config.jwt import get_current_user
 
 
 router = APIRouter(prefix="/api/v1")
@@ -15,12 +15,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
-def get_current_user(token: str) -> TokenData:
-    token_data = verify_token(token)
-    if token_data is None:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    return token_data
 
 @router.get("/vitibrasil/", response_model=List[ivitibrasil_repository.VitiBrasilInDB])
 def read_vitibrasil(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):

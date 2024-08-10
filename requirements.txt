@@ -9,4 +9,5 @@ pendulum==3.0.0
 mysql-connector-python==9.0.0
 SQLAlchemy==1.4.36
 pyjwt==2.8.0
+pwdlib[argon2]==0.2.0
 #requests==2.5
