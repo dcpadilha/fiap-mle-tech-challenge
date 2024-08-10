@@ -29,7 +29,10 @@ Para iniciar o server em modo de desenvolvimento, utilize:
 `source scrapping/scripts/setup_airflow.sh`
 ```
 
-#### Após a aplicação iniciada, será necessário criar o usuário admin:
+Acesse o Airflow em: https://127.0.0.1:8080/home e inicializar as DAGs
+Após as DAGs rodarem, as consultas já podem ser feitas na API com o swagger em: https://127.0.0.1/docs
+
+#### No primeiro acesso será necessário criar o usuário admin:
 Em um ambiente produtivo, este passo deveria ser feito diretamente no banco.
 Para fins instrutivos, criamos um endpoint na API que simplifica esse passo.
 
@@ -44,10 +47,6 @@ Execute o endpoint abaixo com o seguinte Request Body:
 ```
 
 ![](img/endpoint-user.png)
-
-
-Após a tabela criada você pode acessar o Airflow em: https://127.0.0.1:8080/home e inicializar as DAGs
-Após as DAGs rodarem, as consultas já podem ser feitas na API com o swagger em: https://127.0.0.1/docs
 
 ## Documentação:
 - Swagger: https://localhost:8000/docs
