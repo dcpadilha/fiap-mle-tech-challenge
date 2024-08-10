@@ -72,4 +72,7 @@ Após as DAGs rodarem, as consultas já podem ser feitas na API com o swagger em
 - Swagger: https://localhost:8000/docs
 - Documentação no padrão [Redoc](https://github.com/Redocly/redoc): https://localhost:8000/redoc
 
+## Diagrama da infraestrutura:
+![](img/fiap-mle-tech-challenge-v2.drawio.png)
+
 ## License
