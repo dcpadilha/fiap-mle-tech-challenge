@@ -23,11 +23,17 @@ git clone git@github.com:dcpadilha/fiap-mle-tech-challenge.git
 cd api-vitivinicultura
 ```
 
-#### Iniciar a aplicação: 
+### Iniciar a aplicação: 
 Para iniciar o server em modo de desenvolvimento, utilize:
 ```bash
 `source scrapping/scripts/setup_airflow.sh`
 ```
+
+### Containers criados após a execução do script
+![](img/docker-ps.png)
+
+### Para a criar os container manualmente, execute o comando docker-compose abaixo:
+![](img/docker-compose-up.png)
 
 Acesse o Airflow em: https://127.0.0.1:8080/home e inicialize as DAGs
 
