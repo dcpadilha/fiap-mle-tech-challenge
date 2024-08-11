@@ -8,7 +8,8 @@ from zoneinfo import ZoneInfo
 from http import HTTPStatus
 from pwdlib import PasswordHash
 
-
+# Dados utilizados na geração do token de acesso
+# Em um ambiente produtivo, estes dados devem estar protegidos
 SECRET_KEY = "Y-3WUtZYme8PR8Q-yrHZKr_FPMR7CBzPhXoLsG2q1Ww"  # Substitua isso por uma chave secreta segura
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -29,6 +30,7 @@ class TokenData(BaseModel):
     username: str
     role: str
 
+# Criação do Token do usuário após a validação da autenticação
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     to_encode = data.copy()
     if expires_delta:
@@ -39,6 +41,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+# Validação do Token e retorno do objeto TokenData que será utilizado na validação das autorizações
 def verify_token(token: str) -> Optional[TokenData]:
     
     credentials_exception = HTTPException(
@@ -57,7 +60,7 @@ def verify_token(token: str) -> Optional[TokenData]:
     except jwt.PyJWTError:
         raise credentials_exception
     
-    
+# Função que retorna os dados do usuário baseados no token enviado pela chamada da API    
 def get_current_user(token: str = Depends(oauth2_scheme)) -> TokenData:
     token_data = verify_token(token)
     if token_data is None:

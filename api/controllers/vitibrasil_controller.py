@@ -16,6 +16,7 @@ def get_db():
     finally:
         db.close()
 
+# Este endpoint retorna todo o conteúdo do banco de dados que foi extraído através das DAGs
 @router.get("/vitibrasil/", response_model=List[ivitibrasil_repository.VitiBrasilInDB])
 def read_vitibrasil(
     skip: int = 0, 
@@ -27,6 +28,7 @@ def read_vitibrasil(
     vitibrasil = vitibrasil_repository.get_all_vitibrasil(db)
     return vitibrasil
 
+# Endpoint que retorna um único resultado baseado na chave primária (ID) do banco de dados
 @router.get("/vitibrasil/{id}", response_model=ivitibrasil_repository.VitiBrasilInDB)
 def read_vitibrasil(
     id: int, 
@@ -39,6 +41,8 @@ def read_vitibrasil(
         raise HTTPException(status_code=404, detail="Item not found")
     return vitibrasil
 
+# Endpoint que retorna uma categoria específica
+# É possível especificar o período, em anos, da consulta
 @router.get("/vitibrasil/categoria/", response_model=List[ivitibrasil_repository.VitiBrasilInDB])
 def read_vitibrasil(
     skip: int = 0,
@@ -62,6 +66,8 @@ def read_vitibrasil(
     
     return vitibrasil
 
+# Endpoint que retorna resultados baseados na Origem
+# É possível especificar o período, em anos, da consulta
 @router.get("/vitibrasil/origem/", response_model=List[ivitibrasil_repository.VitiBrasilInDB])
 def read_vitibrasil(
     skip: int = 0,

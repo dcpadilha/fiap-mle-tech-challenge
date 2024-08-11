@@ -62,7 +62,8 @@ def login(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = 
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-
+# Endpoint para criação de usuários
+# Em um ambiente produtivo, este endpoint deveria estar protegido e o usuário ADMIN deveria ser criado de outra forma
 @router.post("/user", response_model=UserData)
 def add_user(user_info: UserLogin,db: Session = Depends(get_db)):
     user_info.senha = get_password_hash(user_info.senha)
