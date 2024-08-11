@@ -159,7 +159,7 @@ Para conciliar os códigos de ETL e de disponibilização dos dados via API, tiv
 
  A figura abaixo contém um esquema ilustrativo dos principais pontos e conceitos da solução criada.
 
-![Fluxograma do Plano de Deploy](docs/plano_deploy.png)
+![Fluxograma do Plano de Deploy](img/fluxograma-plano-de-deploy.png)
 
 ## Diagrama da infraestrutura:
 
