@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime, DECIMAL
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
+from enum import Enum
 
 Base = declarative_base()
 
@@ -26,3 +27,10 @@ class Usuario(Base):
     senha = Column(String(50))
     role = Column(String(10))
     inserted_at = Column(DateTime)
+
+class OrigemEnum(str, Enum):
+    Exportacao = "Exportacao"
+    Comercializacao = "Comercializacao"
+    Importacao = "Importacao"
+    Producao = "Producao"
+    Processamento = "Processamento"
