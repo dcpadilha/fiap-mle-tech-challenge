@@ -32,7 +32,7 @@ Para iniciar o server em modo de desenvolvimento, utilize:
 ### Containers criados após a execução do script
 ![](img/docker-ps.png)
 
-### Para a criar os container manualmente, execute o comando docker-compose abaixo:
+### Para a criar os containers manualmente, execute o comando docker-compose abaixo:
 ![](img/docker-compose-up.png)
 
 Acesse o Airflow em: https://127.0.0.1:8080/home e inicialize as DAGs
