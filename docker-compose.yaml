@@ -152,9 +152,16 @@ services:
         if mysql -h "mysql" -u "root" -p"root" -e "USE tech_challenge; DESCRIBE vitibrasil" &> /dev/null; then
             echo "Table 'vitibrasil' already exists."
         else
-            mysql -h "mysql" -u "root" -p"root" -e "USE tech_challenge; CREATE TABLE vitibrasil (     id INT UNSIGNED NOT NULL AUTO_INCREMENT,     ano VARCHAR(4) ,     origem VARCHAR(100) ,     sub_origem VARCHAR(100) ,     categoria VARCHAR(100) ,     sub_categoria VARCHAR(100) ,     valor DECIMAL(18, 2) ,     qtde_kg INT ,     inserted_at DATETIME ,     last_updated DATETIME DEFAULT (NOW()),     PRIMARY KEY (id) );"
+            mysql -h "mysql" -u "root" -p"root" -e "USE tech_challenge; CREATE TABLE vitibrasil (id INT UNSIGNED NOT NULL AUTO_INCREMENT, ano VARCHAR(4) , origem VARCHAR(100) , sub_origem VARCHAR(100) , categoria VARCHAR(100) , sub_categoria VARCHAR(100) , valor DECIMAL(18, 2) , qtde_kg INT , inserted_at DATETIME , last_updated DATETIME DEFAULT (NOW()), PRIMARY KEY (id) );"
             echo "Table 'vitibrasil' created."
+        fi
+        if mysql -h "mysql" -u "root" -p"root" -e "USE tech_challenge; DESCRIBE usuarios" &> /dev/null; then
+            echo "Table 'usuarios' already exists."
+        else
+            mysql -h "mysql" -u "root" -p"root" -e "USE tech_challenge; CREATE TABLE usuarios (id INT UNSIGNED NOT NULL AUTO_INCREMENT, usuario VARCHAR(50) , senha VARCHAR(150) , role VARCHAR(10), inserted_at DATETIME DEFAULT (NOW()), PRIMARY KEY (id) );"
+            echo "Table 'usuarios' created."
         fi  
+        
     depends_on:
       mysql:
         condition: service_healthy
@@ -349,7 +356,7 @@ services:
     ports:
       - "80:80"
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost/"]
+      test: ["CMD", "curl", "--fail", "http://localhost/docs"]
       interval: 30s
       timeout: 10s
       retries: 5

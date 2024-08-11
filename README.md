@@ -29,50 +29,30 @@ Para iniciar o server em modo de desenvolvimento, utilize:
 `source scrapping/scripts/setup_airflow.sh`
 ```
 
-#### Após a aplicação iniciada, será necessário criar a tabela no MySQL (enquanto não foi feita a migration):
-Para acessar o container do MySQL, primeiro verifica o nome do container através de:
-```bash
-docker ps
-```
+Acesse o Airflow em: https://127.0.0.1:8080/home e inicialize as DAGs
 
-Após isso, copie o nome do container do MySQL e rode o comando abaixo:
-```bash
-docker exec -it {nome_do_container} bash
-```
-
-Com isso você estará dentro do container. Acesse o MySQL com:
-```bash
-mysql -u root -p
-```
-A senha é "root"
-
-Rode o comando `show database;` e após isso `use tech_challenge`
-
-Com isso a tabela pode ser criada através da DDL:
-```SQL
-CREATE TABLE vitibrasil (
-    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    ano VARCHAR(4) ,
-    origem VARCHAR(100) ,
-    sub_origem VARCHAR(100) ,
-    categoria VARCHAR(100) ,
-    sub_categoria VARCHAR(100) ,
-    valor DECIMAL(18, 2) ,
-    qtde_kg INT ,
-    inserted_at DATETIME ,
-    last_updated DATETIME DEFAULT (NOW()),
-    PRIMARY KEY (id)
-);
-```
-
-Após a tabela criada você pode acessar o Airflow em: https://127.0.0.1:8080/home e inicializar as DAGs
 Após as DAGs rodarem, as consultas já podem ser feitas na API com o swagger em: https://127.0.0.1/docs
+
+#### No primeiro acesso será necessário criar o usuário admin:
+Em um ambiente produtivo, este passo deveria ser feito diretamente no banco.
+
+Para fins instrutivos, criamos um endpoint na API que simplifica esse passo.
+
+Execute o endpoint abaixo com o seguinte Request Body:
+
+```
+{
+  "usuario": "admin",
+  "senha": "admin",
+  "role": "ADMIN"
+}
+```
+
+![](img/endpoint-user.png)
 
 ## Documentação:
 - Swagger: https://localhost:8000/docs
 - Documentação no padrão [Redoc](https://github.com/Redocly/redoc): https://localhost:8000/redoc
-
-## License
 
 # PLANO DE DEPLOY
 
@@ -180,3 +160,8 @@ Para conciliar os códigos de ETL e de disponibilização dos dados via API, tiv
  A figura abaixo contém um esquema ilustrativo dos principais pontos e conceitos da solução criada.
 
 ![Fluxograma do Plano de Deploy](docs/plano_deploy.png)
+
+## Diagrama da infraestrutura:
+![](img/fiap-mle-tech-challenge-v2.drawio.png)
+
+## License

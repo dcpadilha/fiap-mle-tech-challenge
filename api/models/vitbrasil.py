@@ -17,3 +17,12 @@ class VitiBrasil(Base):
     qtde_kg = Column(Integer)
     inserted_at = Column(DateTime)
     last_updated = Column(DateTime, nullable=True)
+
+class Usuario(Base):
+    __tablename__ = 'usuarios'
+
+    id = Column(Integer, primary_key=True, index=True)
+    usuario = Column(String(50))
+    senha = Column(String(50))
+    role = Column(String(10))
+    inserted_at = Column(DateTime)
