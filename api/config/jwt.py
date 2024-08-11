@@ -6,6 +6,7 @@ from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from zoneinfo import ZoneInfo
 from http import HTTPStatus
+from pwdlib import PasswordHash
 
 
 SECRET_KEY = "Y-3WUtZYme8PR8Q-yrHZKr_FPMR7CBzPhXoLsG2q1Ww"  # Substitua isso por uma chave secreta segura
@@ -14,8 +15,11 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='api/v1/token')
 
+pwd_context = PasswordHash.recommended()
+
 class UserData(BaseModel):
-    message: str
+    user: str
+    role: str
 
 class Token(BaseModel):
     access_token: str
@@ -59,3 +63,12 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> TokenData:
     if token_data is None:
         raise HTTPException(status_code=401, detail="Invalid token")
     return token_data
+
+# Função responsável pela geração do Hash da senha, em ambientes produtivos é recomendável
+# a utilização de um algoritmo de criptografia mais robusto
+def get_password_hash(password: str):
+    return pwd_context.hash(password)
+
+# Função que valida se a senha fornecida corresponde à senha codificada
+def verify_password(plain_password: str, hashed_password: str):
+    return pwd_context.verify(plain_password, hashed_password)

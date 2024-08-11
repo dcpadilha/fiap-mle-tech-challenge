@@ -162,6 +162,19 @@ Para conciliar os códigos de ETL e de disponibilização dos dados via API, tiv
 ![Fluxograma do Plano de Deploy](docs/plano_deploy.png)
 
 ## Diagrama da infraestrutura:
+
+Para fins ilustrativos, este projeto foi publicado utilizando recursos da AWS conforme o diagrama abaixo.
+
+De modo a proteger o ambiente, a instância EC2 foi criada em uma subnet privada e um balanceador de carga foi posicionado de forma a permitir o acesso à aplicação de forma pública.
+
+Note, porém, que não é necessário dispor de uma infraestrutura AWS para reproduzir o ambiente.
+
+Ao seguir os passos descritos na seção de instalação acima em qualquer computador será possível fazer a implantação dos serviços.
+
+### Requisitos mínimos
+
+Para nossa simulação foi provisionada uma instânica EC2 do tipo t2.large (2 vCPUs / 8GB RAM) com 50GB de espaço em disco.
+
 ![](img/fiap-mle-tech-challenge-v2.drawio.png)
 
 ## License
