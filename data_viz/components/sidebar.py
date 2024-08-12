@@ -1,7 +1,5 @@
 import streamlit as st
 
-from data_viz.components.faq import faq
-
 def set_open_api_key(api_key: str):
     st.session_state["OPENAI_API_KEY"] = api_key
     st.session_state["open_api_key_configured"] = True
