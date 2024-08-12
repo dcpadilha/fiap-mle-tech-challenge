@@ -366,6 +366,23 @@ services:
       mysql-init:
         condition: service_completed_successfully
 
+  data-viz:
+    build:
+      context: .
+      dockerfile: ./DockerFile.data_viz
+    ports:
+      - "8501:8501"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8501"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: "always"
+    depends_on:
+      mle-api:
+        condition: service_healthy
+
 volumes:
   postgres-db-volume:
   mysql-data:
