@@ -122,3 +122,19 @@ def save_database_value_and_qtde(data, origem: str, suborigem: str):
         if conn.is_connected():
             cursor.close()
             conn.close()
+
+
+def delete_data(origem: str, suborigem: str, year: str):
+
+    query = f"""
+        DELETE FROM vitibrasil
+        WHERE origem = '{origem}' AND sub_origem = '{suborigem}' AND ano = '{year}'
+    """
+
+    conn = get_db_conn()
+    cursor = conn.cursor()
+    cursor.execute(query)
+
+    conn.commit()
+    cursor.close()
+    conn.close()
