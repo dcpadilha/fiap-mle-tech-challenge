@@ -95,3 +95,30 @@ def get_dags(
         raise HTTPException(status_code=response.status_code, detail=str(http_err))
     except Exception as err:
         raise HTTPException(status_code=500, detail=str(err))
+    
+@router.post("/airflow/dags/reprocess")
+def get_dags(
+    year: str,
+    dag_id: str,
+    # authorization: TokenData = Depends(get_current_user),
+):
+    
+    # if authorization.role != 'ADMIN':
+    #     raise HTTPException(
+    #         status_code=401, 
+    #         detail=f"Usuário {authorization.username} não está autorizado (somente perfil ADMIN). Perfil atual: {authorization.role}"
+    #     )
+    try:
+        # Chamada ao endpoint do Airflow que lista as DAGs existentes
+        response = requests.post(f"{AIRFLOW_API_URL}/{dag_id}/dagRuns", auth=AUTH, json={"conf": {"year_reprocess": year}})
+
+        print(response)
+        response.raise_for_status()  # Levanta um erro se a resposta não for 2xx
+        
+        return {"message": "O reprocessamento foi solicitado com sucesso"}
+    
+    # Avaliação das possíveis exceções
+    except requests.HTTPError as http_err:
+        raise HTTPException(status_code=response.status_code, detail=str(http_err))
+    except Exception as err:
+        raise HTTPException(status_code=500, detail=str(err))
