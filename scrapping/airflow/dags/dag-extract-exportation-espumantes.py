@@ -1,5 +1,5 @@
 from airflow.decorators import dag, task
-from airflow.models.taskinstance import TaskInstance
+from datetime import timedelta
 import pendulum
 from bs4 import BeautifulSoup
 import requests
@@ -10,15 +10,23 @@ import utils
     schedule = "@yearly",
     start_date = pendulum.datetime(1970, 1, 1, tz="UTC"),
     catchup = True,
+    default_args = {"retries": 1, "retry_delay": timedelta(minutes=3)}
 )
 def dag_vitbrasil_extract_exportation_espumantes():
 
-    @task(retries=1)
+    @task()
     def run_scrapping(ds = None, ds_nodash = None, **kwargs):
 
         data = []
 
-        base_url = f"http://vitibrasil.cnpuv.embrapa.br/index.php?ano={ds[:4]}&opcao=opt_06&subopcao=subopt_02"  
+        year = kwargs["dag_run"].conf.get("year_reprocess")
+
+        if year == None:
+            year = ds[:4]
+
+        utils.delete_data("Exportacao", "Espumantes", year)
+
+        base_url = f"http://vitibrasil.cnpuv.embrapa.br/index.php?ano={year}&opcao=opt_06&subopcao=subopt_02"  
         html_page = requests.get(base_url).text
         soup = BeautifulSoup(html_page, "html.parser")
 
@@ -32,7 +40,7 @@ def dag_vitbrasil_extract_exportation_espumantes():
                 if sub_cells and len(sub_cells) > 1:
                     item_name = utils.remove_space(sub_cells[0].text)
 
-                    current_item = {item_name: {"Ano da Informação": ds[:4]}}
+                    current_item = {item_name: {"Ano da Informação": year}}
                     if not "Total" in item_name and not "Sem classificação" in item_name:
                         data.append(current_item)
                         sub_item_qtde = utils.convert_to_int(sub_cells[1].text.replace(" ", "").replace("\n","").replace(".", ""))

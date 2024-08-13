@@ -1,8 +1,8 @@
 from airflow.decorators import dag, task
-from airflow.models.taskinstance import TaskInstance
 import pendulum
 from bs4 import BeautifulSoup
 import requests
+from datetime import timedelta
 
 import utils
 
@@ -18,7 +18,14 @@ def dag_vitbrasil_extract_production():
 
         data = []
 
-        base_url = f"http://vitibrasil.cnpuv.embrapa.br/index.php?ano={ds[:4]}&opcao=opt_02"
+        year = kwargs["dag_run"].conf.get("year_reprocess")
+
+        if year == None:
+            year = ds[:4]
+
+        utils.delete_data("Producao", "", year)
+
+        base_url = f"http://vitibrasil.cnpuv.embrapa.br/index.php?ano={year}&opcao=opt_02"
         html_page = requests.get(base_url).text
         soup = BeautifulSoup(html_page, "html.parser")
 
@@ -34,7 +41,7 @@ def dag_vitbrasil_extract_production():
                     # Se encontrar um item principal, inicializa o dicionário
                     item_name = utils.remove_space(main_cell.text)
                    
-                    current_item = {item_name: {"Ano da Informação": ds[:4]}}
+                    current_item = {item_name: {"Ano da Informação": year}}
                     # print(current_item)
                     data.append(current_item)
                 else:
