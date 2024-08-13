@@ -96,11 +96,13 @@ Para a parte da construção da API, utilizamos a biblioteca FastAPI. Ela é uma
 ##### Airflow DAGs
 
 - \[GET\] `/airflow/dags`: Retorna quais são as DAGs disponíveis no Apache Airflow.
+- \[POST\] `/airflow/dags/reprocess`: Endpoint que permite a execução manual de **todas** as DAGs (*atualização manual dos dados obtidos via web scraping do site da Embrapa*).
 
+> *Nível de autorização necessário para utilizar os endpoints do Airflow é de administrador!*
 
 ##### Autenticação
 
-- \[POST\] `/token`: Cria token de acesso para usuários que possuem liberação.
+- \[POST\] `/token`: Cria token de acesso para usuários que possuem autorização.
 
 ##### Consulta de dados
 
