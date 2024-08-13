@@ -100,7 +100,7 @@ def get_dags(
 def get_dags(
     year: str,
     dag_id: str,
-    # authorization: TokenData = Depends(get_current_user),
+    authorization: TokenData = Depends(get_current_user),
 ):
     
     # if authorization.role != 'ADMIN':
