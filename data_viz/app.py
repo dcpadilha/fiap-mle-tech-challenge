@@ -11,7 +11,7 @@ import streamlit as st
 import requests
 
 st.set_page_config(
-    page_title="Pygwalker w/ Streamlit",
+    page_title="FIAP - MLE Tech Challenge - 2MLET",
     layout="wide"
 )
 
@@ -39,7 +39,7 @@ if st.button('Execute'):
     if not st.session_state.get("open_api_key_configured"):
         st.error("Please configure your API Keys!")
     else:
-        url = f"http://localhost/api/v1/vitibrasil/origem/?skip=0&limit={limit}&origem={origem}&ano_min={ano_min}&ano_max={ano_max}"
+        url = f"http://mle-api/api/v1/vitibrasil/origem/?skip=0&limit={limit}&origem={origem}&ano_min={ano_min}&ano_max={ano_max}"
         payload = {}
         headers = {
         'Authorization': f'Bearer {st.session_state["OPENAI_API_KEY"]}'
